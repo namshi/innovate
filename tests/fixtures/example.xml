@@ -1,14 +1,45 @@
+<?xml version="1.0"?>
 <remote>
     <store>EXAMPLE_STORE</store>
     <key>xyz</key>
     <tran>
         <type>sale</type>
         <class>ecom</class>
-        <cartid>CART_ID</cartid>
-        <description>DESCRIPTION</description>
         <test>1</test>
+        <cartid>ORDER_NUMBER</cartid>
+        <description>DESCRIPTION</description>
         <currency>USD</currency>
-        <amount>40.00</amount>
-        <ref>1234</ref>
+        <amount>40</amount>
+        <ref/>
     </tran>
+    <card>
+        <number>4000000000000002</number>
+        <cvv>123</cvv>
+        <expiry>
+            <month>05</month>
+            <year>3013</year>
+        </expiry>
+    </card>
+    <billing>
+        <name>
+            <title>Mr</title>
+            <first>Forenames</first>
+            <last>Surname</last>
+        </name>
+        <address>
+            <line1>STREET_ADDRESS_LINE_1</line1>
+            <line2>STREET_ADDRESS_LINE_2</line2>
+            <line3>STREET_ADDRESS_LINE_3</line3>
+            <city>CITY</city>
+            <region>REGION</region>
+            <country>COUNTRY</country>
+            <zip>12345</zip>
+        </address>
+        <email>test@namshi.com</email>
+        <ip>192.168.0.1</ip>
+    </billing>
+    <browser>
+        <agent>BROWSER_USER_AGENT_HEADER</agent>
+        <accept>BROWSER_ACCEPT_HEADER</accept>
+    </browser>
 </remote>
