@@ -43,7 +43,7 @@ class ServiceTest extends PHPUnit_Framework_TestCase
         }
         $this->transaction  = new Transaction('sale', 'ecom', true, 'ORDER_NUMBER', 'DESCRIPTION', 'AED', 40, '');
         $this->card         = new Card($this->cardInfo['number'], $this->cardInfo['cvv'], (new DateTime())->add(new DateInterval('P1M')));
-        $this->customer     = new Customer('Mr', 'Ayham', 'Alzoubi');
+        $this->customer     = new Customer('Miss', 'Ayham', 'Alzoubi');
         $this->address      = new Address('alqouz', 'gdp', 'byuilding 3', 'dubai', 'gcc', 'AE', '00971');
         $this->billing      = new BillingInformation($this->customer, $this->address, 'test+test@namshi.com', '86.98.16.162');
         $this->browser      = new Browser('agent', 'accept');

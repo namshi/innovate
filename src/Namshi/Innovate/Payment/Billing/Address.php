@@ -34,6 +34,7 @@ class Address
         {
             throw new InvalidArgumentException("The city parameter can't be empty.");
         }
+        
         $this->city = $city;
     }
 
@@ -48,6 +49,7 @@ class Address
         {
             throw new InvalidArgumentException("The country parameter can't be empty.");
         }
+        
         $this->country = $country;
     }
 
@@ -62,6 +64,7 @@ class Address
         {
             throw new InvalidArgumentException("The address line1 parameter can't be empty.");
         }
+        
         $this->line1 = $line1;
     }
 
@@ -105,6 +108,7 @@ class Address
         if ($zip && (!preg_match("/^[0-9]{5}$/", $zip))) {
             throw new InvalidArgumentException("The zip code parameter doesn't match zip code format.");
         }
+        
         $this->zip = $zip;
     }
 

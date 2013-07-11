@@ -12,6 +12,7 @@ class Redirect extends RedirectResponse
     public function __construct($url, $session, $paReq)
     {
         parent::__construct($url);
+        
         $this->setPaReq($paReq);
         $this->setSession($session);
     }

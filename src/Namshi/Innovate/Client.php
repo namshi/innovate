@@ -72,7 +72,7 @@ class Client extends BaseClient
             } else {
                 return new Redirect($mpi->acsurl, $mpi->session, $mpi->pareq);
             }
-        } catch(Exception $e) {
+        } catch(AuthFailed $e) {
             return new Response('Authentication failed', self::ERROR_RESPONSE);
         }
     }
@@ -124,7 +124,7 @@ class Client extends BaseClient
     {
         $response = $this->send($this->createMpiRequest('POST', self::INNOVATE_MPI_URL, null));
 
-        if (!$response || !isset($response) || !empty($response->xml()->error)) {
+        if (empty($response) || !empty($response->xml()->error)) {
             throw new AuthFailed();
         }
 
