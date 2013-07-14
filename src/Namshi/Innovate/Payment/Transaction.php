@@ -19,13 +19,16 @@ class Transaction
     protected $ref;
 
     /**
-     * Constructor
-     * 
      * @param string $type
      * @param string $class
      * @param bool $test
+     * @param string $cartId
+     * @param string $description
+     * @param string $currency
+     * @param float  $amount
+     * @param null|string $ref
      */
-   public function __construct($type, $class, $test, $cartId, $description, $currency, $amount, $ref = null)
+    public function __construct($type, $class, $test, $cartId, $description, $currency, $amount, $ref = null)
     {
         $this->setType($type);
         $this->setClass($class);

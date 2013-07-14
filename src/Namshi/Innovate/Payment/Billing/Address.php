@@ -17,6 +17,17 @@ class Address
     protected $country;
     protected $zip;
 
+    /**
+     * Constructor
+     *
+     * @param string $line1
+     * @param string|null $line2
+     * @param string|null $line3
+     * @param string $city
+     * @param string $region
+     * @param string $country
+     * @param null|string $zip
+     */
     public function __construct($line1, $line2 = null, $line3 = null, $city, $region = null, $country, $zip = null)
     {
         $this->setLine1($line1);
@@ -117,6 +128,11 @@ class Address
         return $this->zip;
     }
 
+    /**
+     * Converts the current object to an array.
+     *
+     * @return array
+     */
     public function toArray()
     {
         return array(

@@ -22,8 +22,7 @@ class Client extends BaseClient
     const INNOVATE_URL          = "https://secure.innovatepayments.com/gateway/remote.xml";
     const INNOVATE_MPI_URL      = "https://secure.innovatepayments.com/gateway/remote_mpi.xml";
     const RESULT_ERROR_STATUS   = 'E';
-    const ERROR_RESPONSE        = 400;
-    const SUCCESS_RESPONSE      = 200;
+    const RESPONSE_ERROR_STATUS = 400;
 
     protected $storeId;
     protected $key;
@@ -51,7 +50,7 @@ class Client extends BaseClient
     }
 
     /**
-     * Sends a request to the Innovate API with all the informations about the
+     * Sends a request to the Innovate API with all the information about the
      * payment to be performed.
      *
      * @return Request
@@ -73,11 +72,13 @@ class Client extends BaseClient
                 return new Redirect($mpi->acsurl, $mpi->session, $mpi->pareq);
             }
         } catch(AuthFailed $e) {
-            return new Response('Authentication failed', self::ERROR_RESPONSE);
+            return new Response('Authentication failed', self::RESPONSE_ERROR_STATUS);
         }
     }
 
     /**
+     * Creates remote request and creates the body to be sent to innovate api.
+     *
      * @param string $method
      * @param null $uri
      * @param null $headers
@@ -97,6 +98,8 @@ class Client extends BaseClient
     }
 
     /**
+     * Creates mpi request as innovate api need it.
+     *
      * @param string $method
      * @param string $uri
      * @param array $headers
@@ -115,7 +118,7 @@ class Client extends BaseClient
     }
 
     /**
-     * Authorize mpi request
+     * Authorize mpi request by sending request to innovate api to do mpi authentication.
      *
      * @return array|\Guzzle\Http\Message\Response|null
      * @throws Exception\AuthFailed
@@ -132,7 +135,7 @@ class Client extends BaseClient
     }
 
     /**
-     *
+     * Authorize innovate remote request.
      *
      * @param \SimpleXMLElement $mpiData
      * @return array|\Guzzle\Http\Message\Response|null
@@ -143,7 +146,7 @@ class Client extends BaseClient
         $response   = $this->send($this->createRemoteRequest('POST', self::INNOVATE_URL, null, null, $mpiData));
 
         if (!$response || !isset($response) || $response->xml()->auth->status == self::RESULT_ERROR_STATUS) {
-            return new Response('Authentication Failed', self::ERROR_RESPONSE);
+            return new Response('Authentication Failed', self::RESPONSE_ERROR_STATUS);
         }
 
         return $response;

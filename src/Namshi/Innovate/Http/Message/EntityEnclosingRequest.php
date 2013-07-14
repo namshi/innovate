@@ -14,15 +14,33 @@ use Namshi\Innovate\Payment\Browser;
 class EntityEnclosingRequest extends BaseRequest
 {
     protected $xmlBody;
-    
+
+    /**
+     * Constructor
+     *
+     * @param string $method
+     * @param \Guzzle\Http\Url|string $url
+     * @param array $headers
+     */
     public function __construct($method, $url, $headers = array())
     {
         parent::__construct($method, $url, $headers);
         
         $this->xmlBody = array();
     }
-    
-    public function createBody($storeId, $key, Transaction $transaction, Card $card, BillingInformation $billing, Browser $browser, $mpiData)
+
+    /**
+     * Creates http request body formatted in xml
+     *
+     * @param string $storeId
+     * @param string $key
+     * @param \Namshi\Innovate\Payment\Transaction $transaction
+     * @param \Namshi\Innovate\Payment\Card $card
+     * @param \Namshi\Innovate\Payment\BillingInformation $billing
+     * @param \Namshi\Innovate\Payment\Browser $browser
+     * @param array $mpiData
+     */
+    public function createBody($storeId, $key, Transaction $transaction, Card $card, BillingInformation $billing, Browser $browser, array $mpiData)
     {
         $this->xmlBody = array();
         $this->addStoreId($storeId);
@@ -41,6 +59,14 @@ class EntityEnclosingRequest extends BaseRequest
         $this->setBody($serializer->serialize($this->xmlBody, 'xml'));
     }
 
+    /**
+     * Creates mpi request formatted in xml
+     *
+     * @param string $storeId
+     * @param string $key
+     * @param \Namshi\Innovate\Payment\Transaction $transaction
+     * @param \Namshi\Innovate\Payment\Card $card
+     */
     public function createMpiBody($storeId, $key, Transaction $transaction, Card $card)
     {
         $this->xmlBody  = array();
@@ -53,40 +79,73 @@ class EntityEnclosingRequest extends BaseRequest
         $this->setBody($serializer->serialize($this->xmlBody, 'xml'));
     }
 
+    /**
+     * Adds the value of storeId to the body
+     *
+     * @param $id
+     */
     protected function addStoreId($id)
     {
         $this->xmlBody['store'] = $id;
     }
-    
+
+    /**
+     * Adds the value of authentication Key to the body
+     *
+     * @param $key
+     */
     protected function addKey($key)
     {
         $this->xmlBody['key'] = $key;
     }
 
+    /**
+     * Adds the value of mpi data to the body
+     *
+     * @param $mpiData
+     */
     public function addMpiData($mpiData)
     {
         $this->xmlBody['mpi'] = $mpiData;
     }
-    
+
+    /**
+     * Adds the value of transaction data to the body
+     *
+     * @param \Namshi\Innovate\Payment\Transaction $transaction
+     */
     protected function addTransaction(Transaction $transaction)
     {
         $this->xmlBody['tran'] = $transaction->toArray();
     }
 
+    /**
+     * Adds the value of card data to the body
+     *
+     * @param \Namshi\Innovate\Payment\Card $card
+     */
     protected function addCard(Card $card)
     {
         $this->xmlBody['card'] = $card->toArray();
     }
 
+    /**
+     * Adds the value of billing information to the body
+     *
+     * @param \Namshi\Innovate\Payment\BillingInformation $card
+     */
     protected function addBilling(BillingInformation $card)
     {
         $this->xmlBody['billing'] = $card->toArray();
     }
 
+    /**
+     * Adds the value of browser data to the body
+     *
+     * @param \Namshi\Innovate\Payment\Browser $browser
+     */
     protected function addBrowser(Browser $browser)
     {
         $this->xmlBody['browser'] = $browser->toArray();
     }
-
-
 }

@@ -9,6 +9,13 @@ class Redirect extends RedirectResponse
     protected $session;
     protected $paReq;
 
+    /**
+     * Constructor
+     *
+     * @param string $url
+     * @param int $session
+     * @param array $paReq
+     */
     public function __construct($url, $session, $paReq)
     {
         parent::__construct($url);

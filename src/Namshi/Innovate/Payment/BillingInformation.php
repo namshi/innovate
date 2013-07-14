@@ -16,6 +16,14 @@ class BillingInformation
     protected $email;
     protected $ip;
 
+    /**
+     * Constructor
+     *
+     * @param Billing\Customer $customer
+     * @param Billing\Address $address
+     * @param string $email
+     * @param string $ip
+     */
     public function __construct(Customer $customer, Address $address, $email, $ip)
     {
         $this->setCustomer($customer);
@@ -71,6 +79,11 @@ class BillingInformation
         return $this->ip;
     }
 
+    /**
+     * Converts the current object to an array.
+     *
+     * @return array
+     */
     public function toArray()
     {
         return array(

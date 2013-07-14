@@ -10,6 +10,10 @@ class Browser
     protected $agent;
     protected $accept;
 
+    /**
+     * @param string $agent
+     * @param string $accept
+     */
     public function __construct($agent, $accept)
     {
         $this->setAgent($agent);
@@ -36,6 +40,11 @@ class Browser
         return $this->agent;
     }
 
+    /**
+     * Converts the current object to an array.
+     *
+     * @return array
+     */
     public function toArray()
     {
         return array(

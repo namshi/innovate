@@ -12,6 +12,13 @@ class Customer
     protected $firstName;
     protected $lastName;
 
+    /**
+     * Constructor
+     *
+     * @param string $title
+     * @param string $firstName
+     * @param string $lastName
+     */
     public function __construct($title, $firstName, $lastName)
     {
         $this->setTitle($title);
@@ -61,6 +68,11 @@ class Customer
         return $this->title;
     }
 
+    /**
+     * Converts the current object to an array.
+     *
+     * @return array
+     */
     public function toArray()
     {
         return array(
