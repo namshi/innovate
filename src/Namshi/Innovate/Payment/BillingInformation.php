@@ -11,9 +11,24 @@ use InvalidArgumentException;
  */
 class BillingInformation
 {
+    /**
+     * @var Namshi\Innovate\Payment\Billing\Customer
+     */
     protected $customer;
+
+    /**
+     * @var Namshi\Innovate\Payment\Billing\Address
+     */
     protected $address;
+
+    /**
+     * @var string
+     */
     protected $email;
+
+    /**
+     * @var string
+     */
     protected $ip;
 
     /**
@@ -32,26 +47,42 @@ class BillingInformation
         $this->setIp($ip);
     }
 
+    /**
+     * @param Billing\Address $address
+     */
     public function setAddress(Address $address)
     {
         $this->address = $address;
     }
 
+    /**
+     * @return Namshi\Innovate\Payment\Billing\Address
+     */
     public function getAddress()
     {
         return $this->address;
     }
 
+    /**
+     * @param Billing\Customer $customer
+     */
     public function setCustomer(Customer $customer)
     {
         $this->customer = $customer;
     }
 
+    /**
+     * @return Namshi\Innovate\Payment\Billing\Customer
+     */
     public function getCustomer()
     {
         return $this->customer;
     }
 
+    /**
+     * @param $email
+     * @throws \InvalidArgumentException
+     */
     public function setEmail($email)
     {
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -61,11 +92,18 @@ class BillingInformation
         $this->email = $email;
     }
 
+    /**
+     * @return string
+     */
     public function getEmail()
     {
         return $this->email;
     }
 
+    /**
+     * @param $ip
+     * @throws \InvalidArgumentException
+     */
     public function setIp($ip)
     {
         if (! filter_var($ip, FILTER_VALIDATE_IP)) {
@@ -74,6 +112,9 @@ class BillingInformation
         $this->ip = $ip;
     }
 
+    /**
+     * @return string
+     */
     public function getIp()
     {
         return $this->ip;

@@ -11,6 +11,9 @@ use Namshi\Innovate\Payment\Card;
 use Namshi\Innovate\Payment\BillingInformation;
 use Namshi\Innovate\Payment\Browser;
 
+/**
+ * @inheritDoc
+ */
 class EntityEnclosingRequest extends BaseRequest
 {
     protected $xmlBody;

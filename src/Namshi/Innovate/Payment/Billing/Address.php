@@ -9,12 +9,45 @@ use InvalidArgumentException;
  */
 class Address
 {
+    /**
+     * Address line 1
+     *
+     * @var string
+     */
     protected $line1;
+
+    /**
+     * Address line 2
+     *
+     * @var string
+     */
     protected $line2;
+
+    /**
+     * Address line 3
+     *
+     * @var string
+     */
     protected $line3;
+
+    /**
+     * @var string
+     */
     protected $city;
+
+    /**
+     * @var string
+     */
     protected $region;
+
+    /**
+     * @var string
+     */
     protected $country;
+
+    /**
+     * @var string
+     */
     protected $zip;
 
     /**
@@ -39,81 +72,123 @@ class Address
         $this->setZip($zip);
     }
 
+    /**
+     * @param $city
+     * @throws \InvalidArgumentException
+     */
     public function setCity($city)
     {
-        if (!$city)
-        {
+        if (!$city) {
             throw new InvalidArgumentException("The city parameter can't be empty.");
         }
         
         $this->city = $city;
     }
 
+    /**
+     * @return string
+     */
     public function getCity()
     {
         return $this->city;
     }
 
+    /**
+     * @param $country
+     * @throws \InvalidArgumentException
+     */
     public function setCountry($country)
     {
-        if (!$country)
-        {
+        if (!$country) {
             throw new InvalidArgumentException("The country parameter can't be empty.");
         }
         
         $this->country = $country;
     }
 
+    /**
+     * @return string
+     */
     public function getCountry()
     {
         return $this->country;
     }
 
+    /**
+     * Sets address line 1
+     *
+     * @param $line1
+     * @throws \InvalidArgumentException
+     */
     public function setLine1($line1)
     {
-        if (!$line1)
-        {
+        if (!$line1) {
             throw new InvalidArgumentException("The address line1 parameter can't be empty.");
         }
         
         $this->line1 = $line1;
     }
 
+    /**
+     * @return string
+     */
     public function getLine1()
     {
         return $this->line1;
     }
 
+    /**
+     * @param $line2
+     */
     public function setLine2($line2)
     {
         $this->line2 = $line2;
     }
 
+    /**
+     * @return string
+     */
     public function getLine2()
     {
         return $this->line2;
     }
 
+    /**
+     * @param $line3
+     */
     public function setLine3($line3)
     {
         $this->line3 = $line3;
     }
 
+    /**
+     * @return string
+     */
     public function getLine3()
     {
         return $this->line3;
     }
 
+    /**
+     * @param $region
+     */
     public function setRegion($region)
     {
         $this->region = $region;
     }
 
+    /**
+     * @return string
+     */
     public function getRegion()
     {
         return $this->region;
     }
 
+    /**
+     * @param $zip
+     * @throws \InvalidArgumentException
+     */
     public function setZip($zip)
     {
         if ($zip && (!preg_match("/^[0-9]{5}$/", $zip))) {
@@ -123,6 +198,9 @@ class Address
         $this->zip = $zip;
     }
 
+    /**
+     * @return string
+     */
     public function getZip()
     {
         return $this->zip;

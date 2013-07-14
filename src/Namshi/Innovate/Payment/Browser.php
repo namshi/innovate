@@ -7,7 +7,14 @@ namespace Namshi\Innovate\Payment;
  */
 class Browser
 {
+    /**
+     * @var string
+     */
     protected $agent;
+
+    /**
+     * @var string
+     */
     protected $accept;
 
     /**
@@ -20,21 +27,33 @@ class Browser
         $this->setAccept($accept);
     }
 
+    /**
+     * @param $accept
+     */
     public function setAccept($accept)
     {
         $this->accept = $accept;
     }
 
+    /**
+     * @return string
+     */
     public function getAccept()
     {
         return $this->accept;
     }
 
+    /**
+     * @param $agent
+     */
     public function setAgent($agent)
     {
         $this->agent = $agent;
     }
 
+    /**
+     * @return string
+     */
     public function getAgent()
     {
         return $this->agent;

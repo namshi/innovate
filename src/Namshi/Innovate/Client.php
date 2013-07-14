@@ -24,11 +24,29 @@ class Client extends BaseClient
     const RESULT_ERROR_STATUS   = 'E';
     const RESPONSE_ERROR_STATUS = 400;
 
+    /**
+     * @var string
+     */
     protected $storeId;
+    /**
+     * @var string
+     */
     protected $key;
+    /**
+     * @var Transaction
+     */
     protected $transaction;
+    /**
+     * @var Card
+     */
     protected $card;
+    /**
+     * @var BillingInformation
+     */
     protected $billingInformation;
+    /**
+     * @var Browser
+     */
     protected $browser;
 
     /**
@@ -152,61 +170,98 @@ class Client extends BaseClient
         return $response;
     }
 
+
+    /**
+     * @return string
+     */
     public function getStoreId()
     {
         return $this->storeId;
     }
 
+    /**
+     * @param string $storeId
+     */
     public function setStoreId($storeId)
     {
         $this->storeId = $storeId;
     }
 
+    /**
+     * @return string
+     */
     public function getKey()
     {
         return $this->key;
     }
 
+    /**
+     * @param string $key
+     */
     public function setKey($key)
     {
         $this->key = $key;
     }
 
+    /**
+     * @return Namshi\Innovate\Payment\Transaction
+     */
     public function getTransaction()
     {
         return $this->transaction;
     }
 
+    /**
+     * @param Payment\Transaction $transaction
+     */
     public function setTransaction(Transaction $transaction)
     {
         $this->transaction = $transaction;
     }
 
+    /**
+     * @param Payment\Card $card
+     */
     public function setCard(Card $card)
     {
         $this->card = $card;
     }
 
+    /**
+     * @return Payment\Card
+     */
     public function getCard()
     {
         return $this->card;
     }
 
+    /**
+     * @param $browser
+     */
     public function setBrowser($browser)
     {
         $this->browser = $browser;
     }
 
+    /**
+     * @return Payment\Browser
+     */
     public function getBrowser()
     {
         return $this->browser;
     }
 
+    /**
+     * @param $billingInformation
+     */
     public function setBillingInformation($billingInformation)
     {
         $this->billingInformation = $billingInformation;
     }
 
+    /**
+     * @return Payment\BillingInformation
+     */
     public function getBillingInformation()
     {
         return $this->billingInformation;

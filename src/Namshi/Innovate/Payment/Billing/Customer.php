@@ -8,8 +8,19 @@ use InvalidArgumentException;
  */
 class Customer
 {
+    /**
+     * @var string
+     */
     protected $title;
+
+    /**
+     * @var string
+     */
     protected $firstName;
+
+    /**
+     * @var string
+     */
     protected $lastName;
 
     /**
@@ -26,6 +37,10 @@ class Customer
         $this->setLastName($lastName);
     }
 
+    /**
+     * @param $firstName
+     * @throws \InvalidArgumentException
+     */
     public function setFirstName($firstName)
     {
         if (!$firstName)
@@ -35,11 +50,18 @@ class Customer
         $this->firstName = $firstName;
     }
 
+    /**
+     * @return string
+     */
     public function getFirstName()
     {
         return $this->firstName;
     }
 
+    /**
+     * @param $lastName
+     * @throws \InvalidArgumentException
+     */
     public function setLastName($lastName)
     {
         if (!$lastName)
@@ -49,11 +71,18 @@ class Customer
         $this->lastName = $lastName;
     }
 
+    /**
+     * @return string
+     */
     public function getLastName()
     {
         return $this->lastName;
     }
 
+    /**
+     * @param $title
+     * @throws \InvalidArgumentException
+     */
     public function setTitle($title)
     {
         if (!$title)
@@ -63,6 +92,9 @@ class Customer
         $this->title = $title;
     }
 
+    /**
+     * @return string
+     */
     public function getTitle()
     {
         return $this->title;
