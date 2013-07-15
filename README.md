@@ -44,11 +44,6 @@ if ($response instanceof Redirect) {
 }
 ```
 
-we get $extraData from redirect url after we redirect the user it will be added as hidden fields
-to the form.
-
-and then we send the last request to continue the payment.
-
 ## Tests
 
 You can run the test suite by first installing the
