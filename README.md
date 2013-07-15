@@ -28,11 +28,12 @@ $response     = $client->performPayment($this->transaction, $this->card, $this->
 
 ## Normal transactions
 
+In this case the payment is done and the response is 200 ok.
+
 ## 3D secure transactions
 
-http://en.wikipedia.org/wiki/3-D_Secure
-
-We have to check if the response is instance of 'Namshi\Innovate\Http\Response\Redirect' it needs **3d-secured**
+When the response from Innovate require [3-D_Secure](http://en.wikipedia.org/wiki/3-D_Secure) for additional security layer,
+in this case the response will be instance of 'Namshi\Innovate\Http\Response\Redirect' it needs **3d-secured**
 verification, meaning that the user will provide additional credentials before authorizing the payment.
 
 The response will contain the URL that you will need to redirect the user, with a form, via POST:
@@ -50,7 +51,7 @@ if ($response instanceof Redirect) {
 }
 ```
 
-See an example [ACS From](https://github.com/namshi/innovate/tree/innovate-readme/examples/3d-secured/ACSForm.php)
+See an example [Access Control Server From](https://github.com/namshi/innovate/tree/innovate-readme/examples/3d-secured/ACSForm.php)
 
 After you submit the form you will get hidden values `pares`, `session` and you need this value to continue:
 
@@ -62,6 +63,7 @@ $extraData   = array(
 
 $response   = $client->send($this->client->createRemoteRequest('POST', Client::INNOVATE_URL, null, null, $extraData));
 ```
+This `$response` is the final response which is 200 ok if payment successfully performed.
 
 ## Tests
 
@@ -76,8 +78,8 @@ phpunit
 
 There are a couple integration tests that actually verify that the library
 works flawless.
-You need  valid credentials for that, just create a file called `innovate.config`
-in your system's temporary folder (`sys_get_temp_dir()`) with 4 parameters:
+You need  valid credentials for that, just create a file called `.innovate.config`
+in your your project directory with 4 parameters:
 
 ``` php
 <?php
