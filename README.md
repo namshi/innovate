@@ -5,8 +5,9 @@ This library provides support for Innovate using "Guzzle" client
 ## Usage
 
 Using this library is easy, you need to define client and send the required data
-to perform the payment:
-```
+to perform the payment
+
+``` php
 use Namshi\Innovate\Payment\Transaction;
 use Namshi\Innovate\Payment\BillingInformation;
 use Namshi\Innovate\Payment\Browser;
@@ -15,28 +16,34 @@ use Namshi\Innovate\Payment\Billing\Address;
 use Namshi\Innovate\Payment\Card;
 use Namshi\Innovate\Client;
 
-$client       = new Client($storeId, $authenticationKey);
-$transaction  = new Transaction('sale', 'ecom', true, 'ORDER_NUMBER', 'DESCRIPTION', 'AED', 40, '');
-$card         = new Card($this->cardInfo['number'], $this->cardInfo['cvv'], (new DateTime())->add(new DateInterval('P1M')));
+$client       = new Client($storeId, $authenticationKey); // retrieve them from innovate
+$transaction  = new Transaction('sale', 'ecom', true, 'ORDER_NUMBER', 'DESCRIPTION', 'USD', 40, 'AN OPTIONAL REFERENCE TO YOUR TRANSACTION');
+$card         = new Card('1234123412341234', '111', new \DateTime($cardExpiryDate));
 $customer     = new Customer('Mr', 'Ayham', 'Alzoubi');
-$address      = new Address('alqouz', 'gdp', 'byuilding 3', 'dubai', 'gcc', 'AE', '00971');
-$billing      = new BillingInformation($this->customer, $this->address, 'test+test@namshi.com', '192.0.0.1');
-$browser      = new Browser('agent', 'accept');
+$address      = new Address('My address info 1', 'My address info 2', 'My address info 3', 'San Francisco', 'California', 'US', '00000');
+$billing      = new BillingInformation($this->customer, $this->address, 'customers's-email@gmail.com', $customerIpAddress);
+$browser      = new Browser($customerUserAgent, $requestAcceptHeader);
 $response     = $client->performPayment($this->transaction, $this->card, $this->billing, $this->browser);
 ```
-we have to check if the response is instance of 'Namshi\Innovate\Http\Response\Redirect' it needs 3d secured
-the response contains required data to redirect the user and continue the payment
-otherwise the payment are done.
-```
-if ($response instanceof Redirect) {
-    $extraData = array(
-        'PaRes'     => $xpath->query("//input[@name='PaRes']")->item(0)->getAttribute('value'),
-        'session'   => $xpath->query("//input[@name='MD']")->item(0)->getAttribute('value'),
-    );
 
-    $response   = $this->client->send($this->client->createRemoteRequest('POST', Client::INNOVATE_URL, null, null, $extraData));
+We have to check if the response is instance of 'Namshi\Innovate\Http\Response\Redirect' it needs **3d-secured**
+verification, meaning that the user will provide additional credentials before authorizing the payment.
+
+The response will contain the URL that you will need to redirect the user, with a form, via POST:
+
+``` php
+if ($response instanceof Redirect) {
+    // build a form
+    // add hidden PaReq, MD and termUrl
+    // termUrl is the URL to which the user will be redirected after
+    // he enters the 3d secured credentials on
+    // the innovate portal
+
+    // submit the form via JS so that the user gets redirected to
+    // the Innovate webservice
 }
 ```
+
 we get $extraData from redirect url after we redirect the user it will be added as hidden fields
 to the form.
 
