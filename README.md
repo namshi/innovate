@@ -44,6 +44,19 @@ if ($response instanceof Redirect) {
 }
 ```
 
+See an example [ACS From](https://github.com/namshi/innovate/tree/innovate-readme/examples/3d-secured/ACSForm.php)
+
+After you submit the form you will get hidden values `pares`, `session` and you need this value to continue:
+
+```
+$extraData   = array(
+    'PaRes'     => 'Authentication response', // we get this value from hidden fields after we submit the form
+    'session'   => 'MPI Session ID', // we get this value from hidden fields after we submit the form
+);
+
+$response   = $client->send($this->client->createRemoteRequest('POST', Client::INNOVATE_URL, null, null, $extraData));
+```
+
 ## Tests
 
 You can run the test suite by first installing the
