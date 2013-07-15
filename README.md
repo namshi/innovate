@@ -26,6 +26,12 @@ $browser      = new Browser($customerUserAgent, $requestAcceptHeader);
 $response     = $client->performPayment($this->transaction, $this->card, $this->billing, $this->browser);
 ```
 
+## Normal transactions
+
+## 3D secure transactions
+
+http://en.wikipedia.org/wiki/3-D_Secure
+
 We have to check if the response is instance of 'Namshi\Innovate\Http\Response\Redirect' it needs **3d-secured**
 verification, meaning that the user will provide additional credentials before authorizing the payment.
 
