@@ -15,6 +15,7 @@ use DateInterval;
 use Namshi\Innovate\Http\Response\Redirect;
 use DOMXPath;
 use DOMDocument;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 class ServiceTest extends PHPUnit_Framework_TestCase
 {
@@ -32,7 +33,7 @@ class ServiceTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $realConfigFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'innovate.config';
+        $realConfigFile = __DIR__ . '/../../../../../.innovate.config';
 
         if (file_exists($realConfigFile)) {
             require $realConfigFile;
@@ -40,7 +41,10 @@ class ServiceTest extends PHPUnit_Framework_TestCase
             $this->cardInfo             = $cardInfo;
             $this->redirectUrlCardInfo  = $redirectUrlCardInfo;
             $this->ip                   = $ip;
+        } else {
+            throw new FileNotFoundException($realConfigFile);
         }
+
         $this->transaction  = new Transaction('sale', 'ecom', true, 'ORDER_NUMBER', 'DESCRIPTION', 'AED', 40, '');
         $this->card         = new Card($this->cardInfo['number'], $this->cardInfo['cvv'], (new DateTime())->add(new DateInterval('P1M')));
         $this->customer     = new Customer('Mr', 'Ayham', 'Alzoubi');
