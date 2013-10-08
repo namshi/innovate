@@ -9,10 +9,8 @@ use Namshi\Innovate\Payment\Card;
 use Namshi\Innovate\Payment\BillingInformation;
 use Namshi\Innovate\Payment\Browser;
 use Namshi\Innovate\Exception\AuthFailed;
-use SimpleXMLElement;
 use Namshi\Innovate\Http\Response\Redirect;
 use Symfony\Component\HttpFoundation\Response;
-use Exception;
 
 /**
  * HTTP client tied to the Innovate API.
