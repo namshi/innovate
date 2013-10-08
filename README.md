@@ -1,5 +1,7 @@
 # NAMSHI | Innovate
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/3ebdeda0-ce10-4c4e-8917-a93290f4e2a8/mini.png)](https://insight.sensiolabs.com/projects/3ebdeda0-ce10-4c4e-8917-a93290f4e2a8)
+
 This library provides support for the [Innovate](http://www.innovatepayments.com/)
 payment gateway using [Guzzle](https://github.com/guzzle/guzzle).
 
