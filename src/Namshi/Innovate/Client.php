@@ -69,7 +69,7 @@ class Client extends BaseClient
      * Sends a request to the Innovate API with all the information about the
      * payment to be performed.
      *
-     * @return Request
+     * @return \Guzzle\Http\Message\Response
      */
     public function performPayment(Transaction $transaction, Card $card, BillingInformation $billing, Browser $browser)
     {
