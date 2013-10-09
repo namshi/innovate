@@ -8,6 +8,9 @@ use InvalidArgumentException;
  */
 class Customer
 {
+    const TITLE_MR      = "Mr";
+    const TITLE_MISS    = "Miss";
+
     /**
      * @var string
      */
@@ -26,15 +29,15 @@ class Customer
     /**
      * Constructor
      *
-     * @param string $title
      * @param string $firstName
      * @param string $lastName
+     * @param string $title
      */
-    public function __construct($title, $firstName, $lastName)
+    public function __construct($firstName, $lastName, $title = self::TITLE_MR)
     {
-        $this->setTitle($title);
         $this->setFirstName($firstName);
         $this->setLastName($lastName);
+        $this->setTitle($title);
     }
 
     /**

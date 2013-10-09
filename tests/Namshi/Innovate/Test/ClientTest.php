@@ -22,7 +22,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
             new Transaction('sale', 'ecom', true, 'ORDER_NUMBER', 'DESCRIPTION', 'USD', 40),
             new Card('4000000000000002', '123', new DateTime('3013-5')),
             new BillingInformation(
-                new Customer('Mr', 'Forenames', 'Surname'),
+                new Customer('Forenames', 'Surname', 'Mr'),
                 new Address('STREET_ADDRESS_LINE_1', 'STREET_ADDRESS_LINE_2', 'STREET_ADDRESS_LINE_3', 'CITY', 'REGION', 'COUNTRY', '12345'),
                 'test@namshi.com',
                 '192.168.0.1'

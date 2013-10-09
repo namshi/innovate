@@ -12,7 +12,7 @@ class BillingTest extends PHPUnit_Framework_TestCase
 {
     protected function getCustomer()
     {
-        return new Customer('Mr', 'test', 'test');
+        return new Customer('test', 'test', 'Mr');
     }
 
     protected function getAddress()
