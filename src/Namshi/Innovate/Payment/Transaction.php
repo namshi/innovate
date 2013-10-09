@@ -10,6 +10,16 @@ use InvalidArgumentException;
 class Transaction
 {
     /**
+     * Transaction type that identifies a sale.
+     */
+    const TYPE_SALE         = 'sale';
+
+    /**
+     * Class used to identity e-commerce transactions.
+     */
+    const CLASS_ECOMMERCE   = 'ecom';
+
+    /**
      * @var string
      */
     protected $type;
