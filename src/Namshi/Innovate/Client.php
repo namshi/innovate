@@ -88,7 +88,7 @@ class Client extends BaseClient
                 return new Redirect($mpi->acsurl, $mpi->session, $mpi->pareq);
             }
         } catch(AuthFailed $e) {
-            return new Response('Authentication failed', self::RESPONSE_ERROR_STATUS);
+            return new \Guzzle\Http\Message\Response(self::RESPONSE_ERROR_STATUS, 'Authentication failed');
         }
     }
 
