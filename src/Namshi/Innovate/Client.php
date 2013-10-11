@@ -69,7 +69,7 @@ class Client extends BaseClient
      * Sends a request to the Innovate API with all the information about the
      * payment to be performed.
      *
-     * @return \Guzzle\Http\Message\Response
+     * @return Response
      */
     public function performPayment(Transaction $transaction, Card $card, BillingInformation $billing, Browser $browser)
     {
@@ -88,7 +88,7 @@ class Client extends BaseClient
                 return new Redirect($mpi->acsurl, $mpi->session, $mpi->pareq);
             }
         } catch(AuthFailed $e) {
-            return new \Guzzle\Http\Message\Response(self::RESPONSE_ERROR_STATUS, 'Authentication failed');
+            return new Response($e->getMessage(), self::RESPONSE_ERROR_STATUS);
         }
     }
 
@@ -165,7 +165,7 @@ class Client extends BaseClient
             return new Response('Authentication Failed', self::RESPONSE_ERROR_STATUS);
         }
 
-        return $response;
+        return new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders()->toArray());
     }
 
 
