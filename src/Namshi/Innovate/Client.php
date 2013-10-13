@@ -147,7 +147,7 @@ class Client extends BaseClient
             throw new AuthFailed();
         }
 
-        return $response;
+        return new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders()->toArray());
     }
 
     /**
