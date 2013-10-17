@@ -79,8 +79,7 @@ class Client extends BaseClient
             $this->setBillingInformation($billing);
             $this->setBrowser($browser);
 
-            $authorization  = $this->authorizeMpiRequest();
-            $mpi            = $authorization->xml()->mpi;
+            $mpi = $this->authorizeMpiRequest()->xml()->mpi;
 
             if (empty($mpi->acsurl)) {
                 return $this->authorizeRemoteRequest(array($mpi->session));
@@ -147,7 +146,7 @@ class Client extends BaseClient
             throw new AuthFailed();
         }
 
-        return new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders()->toArray());
+        return $response;
     }
 
     /**
