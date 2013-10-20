@@ -17,10 +17,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Client extends BaseClient
 {
-    const INNOVATE_URL          = "https://secure.innovatepayments.com/gateway/remote.xml";
-    const INNOVATE_MPI_URL      = "https://secure.innovatepayments.com/gateway/remote_mpi.xml";
-    const RESULT_ERROR_STATUS   = 'E';
-    const RESPONSE_ERROR_STATUS = 400;
+    const INNOVATE_URL                  = "https://secure.innovatepayments.com/gateway/remote.xml";
+    const INNOVATE_MPI_URL              = "https://secure.innovatepayments.com/gateway/remote_mpi.xml";
+    const RESULT_ERROR_STATUS           = 'E';
+    const RESPONSE_ERROR_STATUS         = 400;
+    const RESPONSE_SERVER_ERROR_STATUS  = 500;
 
     /**
      * @var string
@@ -87,7 +88,9 @@ class Client extends BaseClient
                 return new Redirect($mpi->acsurl, $mpi->session, $mpi->pareq);
             }
         } catch(AuthFailed $e) {
-            return new Response($e->getMessage(), self::RESPONSE_ERROR_STATUS);
+            return new Response($e->getMessage(), static::RESPONSE_ERROR_STATUS);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), static::RESPONSE_SERVER_ERROR_STATUS);
         }
     }
 
