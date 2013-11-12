@@ -19,9 +19,19 @@ class Client extends BaseClient
 {
     const INNOVATE_URL                  = "https://secure.innovatepayments.com/gateway/remote.xml";
     const INNOVATE_MPI_URL              = "https://secure.innovatepayments.com/gateway/remote_mpi.xml";
-    const RESULT_ERROR_STATUS           = 'E';
+    const STATUS_ERROR                  = 'E';
+    const STATUS_ON_HOLD                = 'H';
+    const STATUS_APPROVED               = 'A';
     const RESPONSE_ERROR_STATUS         = 400;
     const RESPONSE_SERVER_ERROR_STATUS  = 500;
+
+    /**
+     * @var array
+     */
+    protected $successfulPaymentStatusCodes = array(
+        self::STATUS_APPROVED,
+        self::STATUS_ON_HOLD,
+    );
 
     /**
      * @var string
@@ -163,7 +173,7 @@ class Client extends BaseClient
     {
         $response   = $this->send($this->createRemoteRequest('POST', self::INNOVATE_URL, null, null, $mpiData));
 
-        if (!$response || !isset($response) || $response->xml()->auth->status == self::RESULT_ERROR_STATUS) {
+        if (!$response || !isset($response) || !in_array($response->xml()->auth->status, $this->successfulPaymentStatusCodes)) {
             return new Response('Authentication Failed', self::RESPONSE_ERROR_STATUS);
         }
 
