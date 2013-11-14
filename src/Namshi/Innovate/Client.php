@@ -174,7 +174,7 @@ class Client extends BaseClient
         $response   = $this->send($this->createRemoteRequest('POST', self::INNOVATE_URL, null, null, $mpiData));
 
         if (!$response || !isset($response) || !in_array($response->xml()->auth->status, $this->successfulPaymentStatusCodes)) {
-            return new Response('Authentication Failed', self::RESPONSE_ERROR_STATUS);
+            return new Response($response->getBody(), self::RESPONSE_ERROR_STATUS, $response->getHeaders()->toArray());
         }
 
         return new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders()->toArray());
