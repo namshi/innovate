@@ -3,8 +3,8 @@
     "description": "A PHP client to perform payments with the Innovate payment gateway.",
     "require": {
         "guzzle/guzzle": ">=3.1,<=3.7",
-        "symfony/serializer": "2.3.*",
-        "symfony/http-foundation": ">=2.3.0,<3.0.0"
+        "symfony/serializer": "~2.3",
+        "symfony/http-foundation": "~2.3"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
