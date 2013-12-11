@@ -85,19 +85,40 @@ class Client extends BaseClient
     public function performPayment(Transaction $transaction, Card $card, BillingInformation $billing, Browser $browser)
     {
         try {
-            $this->setTransaction($transaction);
-            $this->setCard($card);
-            $this->setBillingInformation($billing);
-            $this->setBrowser($browser);
+            $this->setTransactionDetails($transaction, $card, $billing, $browser);
 
             $mpi = $this->authorizeMpiRequest()->xml()->mpi;
 
             if (empty($mpi->acsurl)) {
                 return $this->authorizeRemoteRequest(array($mpi->session));
             } else {
-                return new Redirect($mpi->acsurl, $mpi->session, $mpi->pareq);
+                return new Redirect($mpi->acsurl->__toString(), $mpi->session->__toString(), $mpi->pareq->__toString());
             }
         } catch(AuthFailed $e) {
+            return new Response($e->getMessage(), static::RESPONSE_ERROR_STATUS);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), static::RESPONSE_SERVER_ERROR_STATUS);
+        }
+    }
+
+    /**
+     * Sends a request to the Innovate API with all the information about the
+     * 3D secure payment to be performed.
+     *
+     * @param Transaction        $transaction
+     * @param Card               $card
+     * @param BillingInformation $billing
+     * @param Browser            $browser
+     * @param array              $mpiData
+     * @return Response
+     */
+    public function perform3DSecurePayment(Transaction $transaction, Card $card, BillingInformation $billing, Browser $browser, array $mpiData)
+    {
+        try {
+            $this->setTransactionDetails($transaction, $card, $billing, $browser);
+
+            return $this->authorizeRemoteRequest($mpiData);
+        } catch (AuthFailed $e) {
             return new Response($e->getMessage(), static::RESPONSE_ERROR_STATUS);
         } catch (\Exception $e) {
             return new Response($e->getMessage(), static::RESPONSE_SERVER_ERROR_STATUS);
@@ -279,5 +300,21 @@ class Client extends BaseClient
     public function getBillingInformation()
     {
         return $this->billingInformation;
+    }
+
+    /**
+     * Sets transactions details for the innovate api call
+     *
+     * @param Transaction        $transaction
+     * @param Card               $card
+     * @param BillingInformation $billing
+     * @param Browser            $browser
+     */
+    protected function setTransactionDetails(Transaction $transaction, Card $card, BillingInformation $billing, Browser $browser)
+    {
+        $this->setTransaction($transaction);
+        $this->setCard($card);
+        $this->setBillingInformation($billing);
+        $this->setBrowser($browser);
     }
 }
