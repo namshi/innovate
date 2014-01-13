@@ -114,14 +114,14 @@ The form will be sent to the `$targetUrl` which is the 3D-secure page as follows
 ```html
 <form name="acsform" action="[targetUrl from the response]" method="post">
     <input type="hidden" name="PaReq" value="[The pareq data from response]">
-    <input type="hidden" name="MD" value="[session returned in response]">
+    <input type="hidden" name="MD" value="[Any value can be stored here which will be sent back unchanged in the the 3d secure response e.g to preserve the session id which we can send back to complete the transaction]">
     <input type="hidden" name="TermUrl" value="[return URL on your site]">
     <noscript><input type="Submit"></noscript>
 </form>
 ```
 'termUrl': the url that we need to direct the user to it after he submit the form.
 
-See an example [ACL (Access Control Server) From](https://github.com/namshi/innovate/tree/innovate-readme/examples/3d-secured/ACSForm.php)
+See an example [ACS (Access Control Server) Form](https://github.com/namshi/innovate/tree/innovate-readme/examples/3d-secured/ACSForm.php)
 
 We need to submit the form with JS:
 ```
@@ -203,3 +203,4 @@ To run integration test you need to run:
 ```
 phpunit tests/Namshi/Innovate/Test/Integration/ServiceTest.php
 ```
+**P.S. There are no tests for 3d secure transactions.**
