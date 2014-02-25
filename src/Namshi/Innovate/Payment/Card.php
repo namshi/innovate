@@ -51,12 +51,18 @@ class Card
      */
     public function setExpiryDate(DateTime $expiryDate)
     {
-        if ($expiryDate->getTimestamp() - (new DateTime())->getTimestamp() < 0) {
+        $currentDate  = new DateTime();
+        $currentYear  = $currentDate->format('Y');
+        $currentMonth = $currentDate->format('m');
+        $expiryYear   = $expiryDate->format('Y');
+        $expiryMonth  = $expiryDate->format('m');
+
+        if ($currentYear > $expiryYear || ($currentYear == $expiryYear && $currentMonth > $expiryMonth)) {
             throw new InvalidArgumentException("The date parameter is expired.");
         }
 
-        $this->setExpiryMonth($expiryDate->format('m'));
-        $this->setExpiryYear($expiryDate->format('Y'));
+        $this->setExpiryMonth($expiryMonth);
+        $this->setExpiryYear($expiryYear);
     }
 
     /**

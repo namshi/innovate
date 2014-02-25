@@ -23,7 +23,16 @@ class CardTest extends PHPUnit_Framework_TestCase
      */
     public function testTheDateParameterCantBeExpired()
     {
-        new Card(99999, '123', new DateTime('2013-1'));
+        new Card(99999, '123', new DateTime('@'.(strtotime("-1 month"))));
+    }
+
+    /**
+     * Simply if this test thrown an exception it fails
+     */
+    public function testCardValidTillExpiryMonth()
+    {
+        $card = new Card(99999, '123', new DateTime('@'.strtotime("midnight")));
+        $this->assertInstanceOf('Namshi\Innovate\Payment\Card', $card);
     }
 
     /**
