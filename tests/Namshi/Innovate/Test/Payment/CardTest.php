@@ -19,7 +19,7 @@ class CardTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \Namshi\Innovate\Exception\ExpiredCard
      */
     public function testTheDateParameterCantBeExpired()
     {
