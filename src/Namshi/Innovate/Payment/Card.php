@@ -4,6 +4,7 @@ namespace Namshi\Innovate\Payment;
 
 use InvalidArgumentException;
 use DateTime;
+use Namshi\Innovate\Exception\ExpiredCard as ExpiredCardException;
 
 /**
  * This class represents a card as detailed as Innovate needs it.
@@ -58,7 +59,7 @@ class Card
         $expiryMonth  = $expiryDate->format('m');
 
         if ($currentYear > $expiryYear || ($currentYear == $expiryYear && $currentMonth > $expiryMonth)) {
-            throw new InvalidArgumentException("The date parameter is expired.");
+            throw new ExpiredCardException("The date parameter is expired.");
         }
 
         $this->setExpiryMonth($expiryMonth);
