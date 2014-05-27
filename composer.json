@@ -7,6 +7,7 @@
         "symfony/http-foundation": "~2.3"
     },
     "require-dev": {
+        "php": "~5.4",
         "phpunit/phpunit": "3.7.*"
     },
     "license": "MIT",
