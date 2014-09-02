@@ -55,7 +55,7 @@ class BillingTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testEmailParametercantBeEmpty()
+    public function testEmailParameterCantBeEmpty()
     {
         $billing = new BillingInformation($this->getCustomer(), $this->getAddress(), '', '192.168.0.1');
     }
@@ -63,7 +63,7 @@ class BillingTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testIpAddressParametercantBeEmpty()
+    public function testIpAddressParameterCantBeEmpty()
     {
         $billing = new BillingInformation($this->getCustomer(), $this->getAddress(), 'test.test@namshi.com', '');
     }
@@ -71,7 +71,7 @@ class BillingTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testIpAddressParameterDoesntmatchIpFormat()
+    public function testIpAddressParameterDoesntMatchIpFormat()
     {
         $billing = new BillingInformation($this->getCustomer(), $this->getAddress(), 'test.test@namshi.com', '5432546');
     }

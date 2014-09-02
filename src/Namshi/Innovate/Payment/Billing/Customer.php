@@ -1,6 +1,7 @@
 <?php
 
 namespace Namshi\Innovate\Payment\Billing;
+
 use InvalidArgumentException;
 
 /**

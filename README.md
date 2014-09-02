@@ -64,7 +64,7 @@ if ($response instanceOf Redirect) {
 
 ## Authorization Statuses
 
-A request is sent, the authorization is granted, and **then** the payment request is sent, you will recieve the 
+A request is sent, the authorization is granted, and **then** the payment request is sent, you will receive the
 response [Http status code: 200](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1)
 
 If the authorization is denied, you will receive a response with [Http status code: 400](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1)
@@ -135,7 +135,7 @@ We need to submit the form with JS:
 </script>
 ```
 
-Then after the form is submitted the user will be redirected to 3D-Secure page which asks for extra credintials, 
+Then after the form is submitted the user will be redirected to 3D-Secure page which asks for extra credentials,
 then the user submit the 3-D_secure form and gets redirected to 'termUrl' page with two hidden values ('PaRes', 'MD')
 which are used to create the final request to innovate:
 

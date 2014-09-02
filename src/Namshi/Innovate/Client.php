@@ -61,8 +61,8 @@ class Client extends BaseClient
     /**
      * Constructor
      *
-     * @param type $storeId
-     * @param type $key
+     * @param string $storeId
+     * @param string $key
      * @param \Namshi\Innovate\Payment\Transaction $transaction
      * @param string $baseUrl
      * @param array $config
@@ -94,7 +94,7 @@ class Client extends BaseClient
             } else {
                 return new Redirect($mpi->acsurl->__toString(), $mpi->session->__toString(), $mpi->pareq->__toString());
             }
-        } catch(AuthFailed $e) {
+        } catch (AuthFailed $e) {
             return new Response($e->getMessage(), static::RESPONSE_ERROR_STATUS);
         } catch (\Exception $e) {
             return new Response($e->getMessage(), static::RESPONSE_SERVER_ERROR_STATUS);
@@ -194,11 +194,11 @@ class Client extends BaseClient
     {
         $response   = $this->send($this->createRemoteRequest('POST', self::INNOVATE_URL, null, null, $mpiData));
 
-        if (!$response || !isset($response) ) {
+        if (!$response || !isset($response)) {
             return new Response('Authentication Failed', self::RESPONSE_ERROR_STATUS);
         }
 
-        if(!in_array($response->xml()->auth->status, $this->successfulPaymentStatusCodes)) {
+        if (!in_array($response->xml()->auth->status, $this->successfulPaymentStatusCodes)) {
             return new Response($response->getBody(), self::RESPONSE_ERROR_STATUS, $response->getHeaders()->toArray());
         }
 
