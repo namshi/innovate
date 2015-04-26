@@ -16,7 +16,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 {
     public function testGeneratingACorrectXmlBodyForTheRequest()
     {
-        $client = new StubClient('EXAMPLE_STORE', 'xyz');
+        $client = new StubClient('EXAMPLE_STORE', 'EXAMPLE_MERCHANT_ID', 'xyz', 'searchkey');
         $xml    = file_get_contents(__DIR__ . '/../../../fixtures/example.xml');
         $result = $client->performPayment(
             new Transaction('sale', 'ecom', true, 'ORDER_NUMBER', 'DESCRIPTION', 'USD', 40),
