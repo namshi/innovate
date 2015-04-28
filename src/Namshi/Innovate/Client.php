@@ -3,6 +3,8 @@
 namespace Namshi\Innovate;
 
 use Guzzle\Service\Client as BaseClient;
+use Guzzle\Http\Client as HttpClient;
+use Namshi\Innovate\Exception\InnovateException;
 use Namshi\Innovate\Request\Factory as RequestFactory;
 use Namshi\Innovate\Payment\Transaction;
 use Namshi\Innovate\Payment\Card;
@@ -19,6 +21,8 @@ class Client extends BaseClient
 {
     const INNOVATE_URL                  = "https://secure.innovatepayments.com/gateway/remote.xml";
     const INNOVATE_MPI_URL              = "https://secure.innovatepayments.com/gateway/remote_mpi.xml";
+    const INNOVATE_SEARCH_BASE_URL      = "https://secure.innovatepayments.com";
+    const INNOVATE_SEARCH_BY_CARTID_URI = "/tools/api/xml/transaction/%s/cart";
     const STATUS_ERROR                  = 'E';
     const STATUS_ON_HOLD                = 'H';
     const STATUS_APPROVED               = 'A';
@@ -37,26 +41,41 @@ class Client extends BaseClient
      * @var string
      */
     protected $storeId;
+
     /**
      * @var string
      */
     protected $key;
+
     /**
      * @var Transaction
      */
     protected $transaction;
+
     /**
      * @var Card
      */
     protected $card;
+
     /**
      * @var BillingInformation
      */
     protected $billingInformation;
+
     /**
      * @var Browser
      */
     protected $browser;
+
+    /**
+     * @var string
+     */
+    protected $merchantId;
+
+    /**
+     * @var string
+     */
+    protected $searchKey;
 
     /**
      * Constructor
@@ -67,11 +86,13 @@ class Client extends BaseClient
      * @param string $baseUrl
      * @param array $config
      */
-    public function __construct($storeId, $key, $baseUrl = '', $config = null)
+    public function __construct($storeId, $merchantId, $key, $searchKey, $baseUrl = '', $config = null)
     {
         parent::__construct($baseUrl, $config);
 
         $this->setStoreId($storeId);
+        $this->setMerchantId($merchantId);
+        $this->setSearchKey($searchKey);
         $this->setKey($key);
         $this->setRequestFactory(RequestFactory::getInstance());
     }
@@ -167,6 +188,40 @@ class Client extends BaseClient
     }
 
     /**
+     * Given a cart id reference will search for transactions for that cart id on innovate
+     *
+     * @param $ref
+     * @return \SimpleXMLElement
+     * @throws InnovateException
+     */
+    public function searchTransactionsByCartId($cartId)
+    {
+        $client = new HttpClient(self::INNOVATE_SEARCH_BASE_URL, array(
+            'request.options' => array(
+                'auth'    => array($this->merchantId, $this->searchKey, 'Basic'),
+            )
+        ));
+
+        $request  = $client->get(sprintf(self::INNOVATE_SEARCH_BY_CARTID_URI, $cartId), array(), array(
+            'timeout'         => 5,
+            'connect_timeout' => 5
+        ));
+        $response = $this->send($request);
+
+        if ( ! $response instanceof \Guzzle\Http\Message\Response) {
+            throw new InnovateException('Error while connecting to innovate. Transactions for '.$cartId.' could not be fetched.');
+        }
+
+        $xml = $response->xml();
+
+        if($xml->trancount <= 0) {
+            throw new InnovateException("No transaction found for {$cartId}");
+        }
+
+        return $xml;
+    }
+
+    /**
      * Authorize mpi request by sending request to innovate api to do mpi authentication.
      *
      * @return array|\Guzzle\Http\Message\Response|null
@@ -220,6 +275,22 @@ class Client extends BaseClient
     public function setStoreId($storeId)
     {
         $this->storeId = $storeId;
+    }
+
+    /**
+     * @param string $merchantId
+     */
+    public function setMerchantId($merchantId)
+    {
+        $this->merchantId = $merchantId;
+    }
+
+    /**
+     * @param string $searchKey
+     */
+    public function setSearchKey($searchKey)
+    {
+        $this->searchKey = $searchKey;
     }
 
     /**

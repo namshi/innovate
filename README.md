@@ -7,6 +7,23 @@
 This library provides support for the [Innovate](http://www.innovatepayments.com/)
 payment gateway using [Guzzle](https://github.com/guzzle/guzzle).
 
+## Version
+
+From the 3.0.0 version, the client constructor has been changed. Now it accepts two more parameters:
+
+```
+/* 2.x version */
+$client = new Namshi\Innovate\Client('storeid', 'key');
+```
+
+```
+/* 3.x version */
+$client = new Namshi\Innovate\Client('storeid', 'merchantid', 'key', 'searchkey');
+```
+
+The added paramets are used when fetching the transactions related to a cart id (see below).
+
+
 ## Installation
 
 You can install this library via composer: have a look
@@ -159,6 +176,12 @@ if ($finalResponse->getStatusCode() === 200) {
 }
 ```
 
+## Fetching transaction related to a cart id
+
+From 3.0.0 version there is a new method ```Namshi\Innovate\Client::searchTransactionsByCartId``` that let you fetch the transaction given the innovate cart id.
+
+This method will return a ```\SimpleXMLElement``` object containing the answer from innovate or throw an exception (```Namshi\Innovate\Exception\InnovateException```).
+
 
 ## Tests
 
@@ -181,7 +204,9 @@ in your your project directory with 4 parameters:
 
 $configs = array(
 	'storeId' 		    => 'xxxxx',  // your store Id in Innovate
+	'merchantId' 		=> 'xxxxx',  // your merchant Id in Innovate
 	'authenticationKey' => 'xxxxxxxxxxx',  // your authentication key
+	'searchKey'         => 'xxxxxxxxxxx',  // your search key
 );
 
 // Card info

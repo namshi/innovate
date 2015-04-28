@@ -51,7 +51,14 @@ class ServiceTest extends PHPUnit_Framework_TestCase
         $this->address      = new Address('alqouz', 'gdp', 'byuilding 3', 'dubai', 'gcc', 'AE', '00971');
         $this->billing      = new BillingInformation($this->customer, $this->address, 'test+test@namshi.com', '86.98.16.162');
         $this->browser      = new Browser('agent', 'accept');
-        $this->client       = new Client($this->configs['storeId'], $this->configs['authenticationKey'], $this->configs);
+        $this->client       = new Client(
+            $this->configs['storeId'],
+            $this->configs['merchantId'],
+            $this->configs['authenticationKey'],
+            $this->configs['searchKey'],
+            $this->configs
+        );
+        $this->expiringDate = new \DateTime('now + 1 year');
     }
 
     public function testInnovateServiceAuthentication()
@@ -78,13 +85,13 @@ class ServiceTest extends PHPUnit_Framework_TestCase
 
     public function testInnovateServiceAuthenticationFailingWithInvalidCardInfo()
     {
-        $response = $this->client->performPayment($this->transaction, new Card('12122123323', '3222', new DateTime('2014-5')), $this->billing, $this->browser);
+        $response = $this->client->performPayment($this->transaction, new Card('12122123323', '3222', $this->expiringDate), $this->billing, $this->browser);
         $this->assertEquals(400, $response->getStatusCode());
     }
 
     public function testInnovateServiceRedirectUrl()
     {
-        $this->card = new Card($this->redirectUrlCardInfo['number'], $this->redirectUrlCardInfo['cvv'], new DateTime('2014-5'));
+        $this->card = new Card($this->redirectUrlCardInfo['number'], $this->redirectUrlCardInfo['cvv'], $this->expiringDate);
         $response   = $this->client->performPayment($this->transaction, $this->card, $this->billing, $this->browser);
         $this->assertInstanceOf('Namshi\Innovate\Http\Response\Redirect', $response);
 
@@ -109,7 +116,7 @@ class ServiceTest extends PHPUnit_Framework_TestCase
 
     public function testInnovateServiceRedirectUrlWithoutSendingFormData()
     {
-        $this->card = new Card($this->redirectUrlCardInfo['number'], $this->redirectUrlCardInfo['cvv'], new DateTime('2014-5'));
+        $this->card = new Card($this->redirectUrlCardInfo['number'], $this->redirectUrlCardInfo['cvv'], $this->expiringDate);
         $response   = $this->client->performPayment($this->transaction, $this->card, $this->billing, $this->browser);
         $this->assertInstanceOf('Namshi\Innovate\Http\Response\Redirect', $response);
 
@@ -122,7 +129,7 @@ class ServiceTest extends PHPUnit_Framework_TestCase
 
     public function testInnovateServiceRedirectUrlWithWrongFormData()
     {
-        $this->card = new Card($this->redirectUrlCardInfo['number'], $this->redirectUrlCardInfo['cvv'], new DateTime('2014-5'));
+        $this->card = new Card($this->redirectUrlCardInfo['number'], $this->redirectUrlCardInfo['cvv'], $this->expiringDate);
         $response   = $this->client->performPayment($this->transaction, $this->card, $this->billing, $this->browser);
         $this->assertInstanceOf('Namshi\Innovate\Http\Response\Redirect', $response);
 
