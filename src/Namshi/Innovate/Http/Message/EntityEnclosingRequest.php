@@ -60,10 +60,14 @@ class EntityEnclosingRequest extends BaseRequest
         $encoder    = new XmlEncoder('remote');
         $serializer = new Serializer(array(new GetSetMethodNormalizer()), array($encoder));
 
-        $xmlBody = $serializer->serialize($this->xmlBody, 'xml');
-        file_put_contents (sys_get_temp_dir().'/innovate.txt' , $xmlBody, FILE_APPEND);
+        $xmlBodycopy = $this->xmlBody;
+        $xmlBodycopy['card']['number'] = 'xxxxx';
+        $xmlBodycopy['card']['cvv'] = 'YYY';
+        $xmlBodycopy['key'] = 'xyz';
 
-        $this->setBody($xmlBody);
+        file_put_contents (sys_get_temp_dir().'/innovate.txt' , $serializer->serialize($xmlBodycopy, 'xml'), FILE_APPEND);
+
+        $this->setBody($serializer->serialize($this->xmlBody, 'xml'));
     }
 
     /**
@@ -114,7 +118,6 @@ class EntityEnclosingRequest extends BaseRequest
     public function addMpiData(array $mpiData)
     {
         $this->xmlBody['mpi'] = $mpiData;
-        file_put_contents (sys_get_temp_dir().'/innovate.txt' , json_encode($this->xmlBody), FILE_APPEND );
     }
 
     /**

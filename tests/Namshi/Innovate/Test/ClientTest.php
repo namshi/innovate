@@ -54,9 +54,6 @@ class StubClient extends Client
         $request = parent::createRequest('post');
         $request->createBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser(), array('session' => 'fe36ff89674255b9b2e54608192l', 'pares' => 'IVPTEST_A_NTViOWIylTcwODE5MDAwMDZmNTQ='));
 
-        file_put_contents (sys_get_temp_dir().'/innovate.txt' , $request->getBody(), FILE_APPEND );
-        echo $request->getBody();
-
         return $request->getBody();
     }
 }
