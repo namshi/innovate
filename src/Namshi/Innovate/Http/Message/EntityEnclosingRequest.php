@@ -59,7 +59,11 @@ class EntityEnclosingRequest extends BaseRequest
         
         $encoder    = new XmlEncoder('remote');
         $serializer = new Serializer(array(new GetSetMethodNormalizer()), array($encoder));
-        $this->setBody($serializer->serialize($this->xmlBody, 'xml'));
+
+        $xmlBody = $serializer->serialize($this->xmlBody, 'xml');
+        file_put_contents (sys_get_temp_dir().'/innovate.txt' , $xmlBody, FILE_APPEND);
+
+        $this->setBody($xmlBody);
     }
 
     /**
@@ -107,9 +111,10 @@ class EntityEnclosingRequest extends BaseRequest
      *
      * @param $mpiData
      */
-    public function addMpiData($mpiData)
+    public function addMpiData(array $mpiData)
     {
         $this->xmlBody['mpi'] = $mpiData;
+        file_put_contents (sys_get_temp_dir().'/innovate.txt' , json_encode($this->xmlBody), FILE_APPEND );
     }
 
     /**
