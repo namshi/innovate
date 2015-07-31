@@ -23,7 +23,7 @@ class CardTest extends PHPUnit_Framework_TestCase
      */
     public function testTheDateParameterCantBeExpired()
     {
-        new Card(99999, '123', new DateTime('@'.(strtotime("-1 month"))));
+        new Card(99999, '123', new DateTime('@'.(strtotime('last day of previous month'))));
     }
 
     /**
