@@ -23,7 +23,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "Namshi\\Innovate": "src/"
+            "Namshi\\Innovate": ["src/", "tests/"]
         }
     },
     "minimum-stability": "stable"
