@@ -4,7 +4,8 @@
     "require": {
         "guzzle/guzzle": "~3.1",
         "symfony/serializer": "~2.3",
-        "symfony/http-foundation": "~2.3"
+        "symfony/http-foundation": "~2.3",
+        "psr/log": "^1.0"
     },
     "require-dev": {
         "php": "~5.4",

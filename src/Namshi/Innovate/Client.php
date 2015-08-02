@@ -2,6 +2,7 @@
 
 namespace Namshi\Innovate;
 
+use Guzzle\Http\Message\Request;
 use Guzzle\Service\Client as BaseClient;
 use Guzzle\Http\Client as HttpClient;
 use Namshi\Innovate\Exception\InnovateException;
@@ -12,6 +13,7 @@ use Namshi\Innovate\Payment\BillingInformation;
 use Namshi\Innovate\Payment\Browser;
 use Namshi\Innovate\Exception\AuthFailed;
 use Namshi\Innovate\Http\Response\Redirect;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -78,15 +80,22 @@ class Client extends BaseClient
     protected $searchKey;
 
     /**
+     * @var LoggerInterface|null
+     */
+    protected $logger;
+
+    /**
      * Constructor
      *
      * @param string $storeId
+     * @param string $merchantId
      * @param string $key
-     * @param \Namshi\Innovate\Payment\Transaction $transaction
+     * @param string $searchKey
      * @param string $baseUrl
-     * @param array $config
+     * @param null $config
+     * @param LoggerInterface|null $logger
      */
-    public function __construct($storeId, $merchantId, $key, $searchKey, $baseUrl = '', $config = null)
+    public function __construct($storeId, $merchantId, $key, $searchKey, $baseUrl = '', $config = null, LoggerInterface $logger = null)
     {
         parent::__construct($baseUrl, $config);
 
@@ -95,6 +104,7 @@ class Client extends BaseClient
         $this->setSearchKey($searchKey);
         $this->setKey($key);
         $this->setRequestFactory(RequestFactory::getInstance());
+        $this->logger = $logger;
     }
 
     /**
@@ -164,6 +174,8 @@ class Client extends BaseClient
             $request->createBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser(), $mpiData);
         }
 
+        $this->logRequest($request);
+
         return $request;
     }
 
@@ -183,6 +195,8 @@ class Client extends BaseClient
         if (!$body) {
             $request->createMpiBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser());
         }
+
+        $this->logRequest($request);
 
         return $request;
     }
@@ -310,7 +324,7 @@ class Client extends BaseClient
     }
 
     /**
-     * @return Namshi\Innovate\Payment\Transaction
+     * @return \Namshi\Innovate\Payment\Transaction
      */
     public function getTransaction()
     {
@@ -387,5 +401,18 @@ class Client extends BaseClient
         $this->setCard($card);
         $this->setBillingInformation($billing);
         $this->setBrowser($browser);
+    }
+
+    /**
+     * @param Request $request
+     */
+    protected function logRequest(Request $request)
+    {
+        if($this->logger) {
+            $xml = new \SimpleXMLElement($request->getBody()->__toString());
+            $xml->card->number = '****************';
+            $xml->card->cvv = '***';
+            $this->logger->info('Innovate remote request for cartId: '.$xml->tran->cartid, array('xml' => $xml->asXML()));
+        }
     }
 }
