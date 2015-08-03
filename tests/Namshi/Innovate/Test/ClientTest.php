@@ -4,23 +4,23 @@ namespace Namshi\Innovate\Test;
 
 use PHPUnit_Framework_TestCase;
 use Namshi\Innovate\Client;
+use Namshi\Innovate\Test\ClientStub;
 use Namshi\Innovate\Payment\Transaction;
 use Namshi\Innovate\Payment\Card;
 use Namshi\Innovate\Payment\BillingInformation;
 use Namshi\Innovate\Payment\Billing\Customer;
 use Namshi\Innovate\Payment\Billing\Address;
 use Namshi\Innovate\Payment\Browser;
-use DateTime;
 
 class ClientTest extends PHPUnit_Framework_TestCase
 {
     public function testGeneratingACorrectXmlBodyForTheRequest()
     {
-        $client = new StubClient('EXAMPLE_STORE', 'EXAMPLE_MERCHANT_ID', 'xyz', 'searchkey');
-        $xml    = file_get_contents(__DIR__ . '/../../../fixtures/example.xml');
-        $result = $client->performPayment(
+        $client = new ClientStub('EXAMPLE_STORE', 'EXAMPLE_MERCHANT_ID', 'xyz', 'searchkey');
+        $xmlSample    = file_get_contents(__DIR__ . '/../../../fixtures/example.xml');
+        $request = $client->performPayment(
             new Transaction('sale', 'ecom', true, 'ORDER_NUMBER', 'DESCRIPTION', 'USD', 40),
-            new Card('4000000000000002', '123', new DateTime('3013-5')),
+            new Card('4000000000000002', '123', new \DateTime('2025-5')),
             new BillingInformation(
                 new Customer('Forenames', 'Surname', 'Mr'),
                 new Address('STREET_ADDRESS_LINE_1', 'STREET_ADDRESS_LINE_2', 'STREET_ADDRESS_LINE_3', 'CITY', 'REGION', 'COUNTRY', '12345'),
@@ -29,7 +29,35 @@ class ClientTest extends PHPUnit_Framework_TestCase
             ),
             new Browser('BROWSER_USER_AGENT_HEADER', 'BROWSER_ACCEPT_HEADER')
         );
-        $this->assertEquals(trim(preg_replace("/\s+/", '', $xml)), trim(preg_replace("/\s+/", '', $result->__toString())));
+
+        $xml       = new \SimpleXMLElement($request->getBody());
+        $xmlSample = new \SimpleXMLElement($xmlSample);
+
+        $this->assertEquals($xmlSample->key,  $xml->key);
+        $this->assertEquals($xmlSample->tran->type,  $xml->tran->type);
+        $this->assertEquals($xmlSample->tran->currency, $xml->tran->currency);
+        $this->assertEquals($xmlSample->card->number, $xml->card->number);
+        $this->assertEquals($xmlSample->card->cvv,  $xml->card->cvv);
+        $this->assertEquals($xmlSample->card->expiry->month,  $xml->card->expiry->month);
+        $this->assertEquals($xmlSample->card->expiry->year, $xml->card->expiry->year);
+    }
+
+    public function testCreateMpiRequest()
+    {
+        $client = new ClientStub('EXAMPLE_STORE', 'EXAMPLE_MERCHANT_ID', 'xyz', 'searchkey');
+        $this->setTransactionDetails($client);
+
+        $request = $client->createMpiRequest('POST', Client::INNOVATE_MPI_URL, null);
+        $xml     = new \SimpleXMLElement($request->getBody());
+
+        $this->assertEquals('xyz', (string) $xml->key);
+        $this->assertEquals('sale', (string)  $xml->tran->type);
+        $this->assertEquals('USD',(string)  $xml->tran->currency);
+        $this->assertEquals('4000000000000002',(string)  $xml->card->number);
+        $this->assertEquals('123',(string)  $xml->card->cvv);
+        $this->assertEquals('05',(string)  $xml->card->expiry->month);
+        $this->assertEquals('2025',(string)  $xml->card->expiry->year);
+
     }
 
     public function testClientRemoteUrl()
@@ -41,19 +69,18 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('string', filter_var(Client::INNOVATE_MPI_URL, FILTER_VALIDATE_URL));
     }
-}
 
-class StubClient extends Client
-{
-    public function performPayment(Transaction $transaction, Card $card, BillingInformation $billing, Browser $browser)
+    protected function setTransactionDetails(Client $client)
     {
-        $this->setTransaction($transaction);
-        $this->setCard($card);
-        $this->setBillingInformation($billing);
-        $this->setBrowser($browser);
-        $request = parent::createRequest('post');
-        $request->createBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser(), array());
+        $client->setTransaction(new Transaction('sale', 'ecom', true, 'ORDER_NUMBER', 'DESCRIPTION', 'USD', 40));
+        $client->setCard(new Card('4000000000000002', '123', new \DateTime('2025-5')));
+        $client->setBillingInformation(new BillingInformation(
+          new Customer('Forenames', 'Surname', 'Mr'),
+          new Address('STREET_ADDRESS_LINE_1', 'STREET_ADDRESS_LINE_2', 'STREET_ADDRESS_LINE_3', 'CITY', 'REGION', 'COUNTRY', '12345'),
+          'test@namshi.com',
+          '192.168.0.1'
+        ));
 
-        return $request->getBody();
+        $client->setBrowser(new Browser('BROWSER_USER_AGENT_HEADER', 'BROWSER_ACCEPT_HEADER'));
     }
 }

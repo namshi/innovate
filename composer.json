@@ -8,7 +8,7 @@
     },
     "require-dev": {
         "php": "~5.4",
-        "phpunit/phpunit": "3.7.*"
+        "phpunit/phpunit": "4.7.*"
     },
     "license": "MIT",
     "authors": [
@@ -23,7 +23,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "Namshi\\Innovate": "src/"
+            "Namshi\\Innovate": ["src/", "tests/"]
         }
     },
     "minimum-stability": "stable"

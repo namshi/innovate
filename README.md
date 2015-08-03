@@ -230,4 +230,3 @@ To run integration test you need to run:
 ```
 phpunit tests/Namshi/Innovate/Test/Integration/ServiceTest.php
 ```
-**P.S. There are no tests for 3d secure transactions.**
