@@ -15,6 +15,7 @@ class ThreeDSecureClientTest extends PHPUnit_Framework_TestCase
 {
     public function testGeneratingACorrectXmlBodyForTheRequest()
     {
+        $this->markTestSkipped('to be refactored');
         $mpiData     = array(
             'session' => 'xyz',
             'pares'   => '323213sdsd0132132='

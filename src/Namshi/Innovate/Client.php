@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * HTTP client tied to the Innovate API.
  */
-class Client extends BaseClient
+class Client
 {
     const INNOVATE_URL                  = "https://secure.innovatepayments.com/gateway/remote.xml";
     const INNOVATE_MPI_URL              = "https://secure.innovatepayments.com/gateway/remote_mpi.xml";
@@ -78,23 +78,30 @@ class Client extends BaseClient
     protected $searchKey;
 
     /**
+     * @var
+     */
+    protected $client;
+
+    /**
      * Constructor
      *
      * @param string $storeId
-     * @param string $key
-     * @param \Namshi\Innovate\Payment\Transaction $transaction
+     * @param array|\Guzzle\Common\Collection|null $merchantId
+     * @param $key
+     * @param $searchKey
      * @param string $baseUrl
-     * @param array $config
+     * @param null $config
+     * @param BaseClient $client
      */
-    public function __construct($storeId, $merchantId, $key, $searchKey, $baseUrl = '', $config = null)
+    public function __construct($storeId, $merchantId, $key, $searchKey, BaseClient $client)
     {
-        parent::__construct($baseUrl, $config);
+        $this->client = $client;
 
         $this->setStoreId($storeId);
         $this->setMerchantId($merchantId);
         $this->setSearchKey($searchKey);
         $this->setKey($key);
-        $this->setRequestFactory(RequestFactory::getInstance());
+        $this->client->setRequestFactory(RequestFactory::getInstance());
     }
 
     /**
@@ -158,7 +165,7 @@ class Client extends BaseClient
      */
     public function createRemoteRequest($method = 'GET', $uri = null, $headers = null, $body = null, $mpiData)
     {
-        $request = parent::createRequest($method, $uri, $headers, $body);
+        $request = $this->client->createRequest($method, $uri, $headers, $body);
 
         if (!$body) {
             $request->createBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser(), $mpiData);
@@ -178,7 +185,7 @@ class Client extends BaseClient
      */
     public function createMpiRequest($method = 'GET', $uri = null, $headers = null, $body = null)
     {
-        $request = parent::createRequest($method, $uri, $headers, $body);
+        $request = $this->client->createRequest($method, $uri, $headers, $body);
 
         if (!$body) {
             $request->createMpiBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser());
