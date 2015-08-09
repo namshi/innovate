@@ -23,8 +23,9 @@ class ClientStub extends Client
   * Instead of sending a requesto to Innovate we directly return a valid response
   * @return Response
   */
-  public function authorizeMpiRequest()
+  public function  authorizeMpiRequest()
   {
+
       $xmlBody = '
       <result>
         <mpi>

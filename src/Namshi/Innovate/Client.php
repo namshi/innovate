@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * HTTP client tied to the Innovate API.
  */
-class Client extends BaseClient
+class Client
 {
     const INNOVATE_URL                  = "https://secure.innovatepayments.com/gateway/remote.xml";
     const INNOVATE_MPI_URL              = "https://secure.innovatepayments.com/gateway/remote_mpi.xml";
@@ -78,23 +78,29 @@ class Client extends BaseClient
     protected $searchKey;
 
     /**
+     * @var
+     */
+    protected $client;
+
+    /**
      * Constructor
      *
      * @param string $storeId
-     * @param string $key
-     * @param \Namshi\Innovate\Payment\Transaction $transaction
+     * @param array|\Guzzle\Common\Collection|null $merchantId
+     * @param $key
+     * @param $searchKey
      * @param string $baseUrl
-     * @param array $config
+     * @param null $config
+     * @param BaseClient $client
      */
-    public function __construct($storeId, $merchantId, $key, $searchKey, $baseUrl = '', $config = null)
+    public function __construct($storeId, $merchantId, $key, $searchKey, BaseClient $client)
     {
-        parent::__construct($baseUrl, $config);
-
-        $this->setStoreId($storeId);
-        $this->setMerchantId($merchantId);
-        $this->setSearchKey($searchKey);
-        $this->setKey($key);
-        $this->setRequestFactory(RequestFactory::getInstance());
+        $this->client     = $client;
+        $this->storeId    = $storeId;
+        $this->merchantId = $merchantId;
+        $this->searchKey  = $searchKey;
+        $this->key        = $key;
+        $this->client->setRequestFactory(RequestFactory::getInstance());
     }
 
     /**
@@ -158,10 +164,10 @@ class Client extends BaseClient
      */
     public function createRemoteRequest($method = 'GET', $uri = null, $headers = null, $body = null, $mpiData)
     {
-        $request = parent::createRequest($method, $uri, $headers, $body);
+        $request = $this->client->createRequest($method, $uri, $headers, $body);
 
         if (!$body) {
-            $request->createBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser(), $mpiData);
+            $request->createBody($this->storeId, $this->key, $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser(), $mpiData);
         }
 
         return $request;
@@ -178,10 +184,10 @@ class Client extends BaseClient
      */
     public function createMpiRequest($method = 'GET', $uri = null, $headers = null, $body = null)
     {
-        $request = parent::createRequest($method, $uri, $headers, $body);
+        $request = $this->client->createRequest($method, $uri, $headers, $body);
 
         if (!$body) {
-            $request->createMpiBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser());
+            $request->createMpiBody($this->storeId, $this->key, $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser());
         }
 
         return $request;
@@ -258,55 +264,6 @@ class Client extends BaseClient
         }
 
         return new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders()->toArray());
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getStoreId()
-    {
-        return $this->storeId;
-    }
-
-    /**
-     * @param string $storeId
-     */
-    public function setStoreId($storeId)
-    {
-        $this->storeId = $storeId;
-    }
-
-    /**
-     * @param string $merchantId
-     */
-    public function setMerchantId($merchantId)
-    {
-        $this->merchantId = $merchantId;
-    }
-
-    /**
-     * @param string $searchKey
-     */
-    public function setSearchKey($searchKey)
-    {
-        $this->searchKey = $searchKey;
-    }
-
-    /**
-     * @return string
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * @param string $key
-     */
-    public function setKey($key)
-    {
-        $this->key = $key;
     }
 
     /**
