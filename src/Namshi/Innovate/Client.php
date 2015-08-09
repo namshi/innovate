@@ -95,12 +95,11 @@ class Client
      */
     public function __construct($storeId, $merchantId, $key, $searchKey, BaseClient $client)
     {
-        $this->client = $client;
-
-        $this->setStoreId($storeId);
-        $this->setMerchantId($merchantId);
-        $this->setSearchKey($searchKey);
-        $this->setKey($key);
+        $this->client     = $client;
+        $this->storeId    = $storeId;
+        $this->merchantId = $merchantId;
+        $this->searchKey  = $searchKey;
+        $this->key        = $key;
         $this->client->setRequestFactory(RequestFactory::getInstance());
     }
 
@@ -168,7 +167,7 @@ class Client
         $request = $this->client->createRequest($method, $uri, $headers, $body);
 
         if (!$body) {
-            $request->createBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser(), $mpiData);
+            $request->createBody($this->storeId, $this->key, $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser(), $mpiData);
         }
 
         return $request;
@@ -188,7 +187,7 @@ class Client
         $request = $this->client->createRequest($method, $uri, $headers, $body);
 
         if (!$body) {
-            $request->createMpiBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser());
+            $request->createMpiBody($this->storeId, $this->key, $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser());
         }
 
         return $request;
@@ -265,55 +264,6 @@ class Client
         }
 
         return new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders()->toArray());
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getStoreId()
-    {
-        return $this->storeId;
-    }
-
-    /**
-     * @param string $storeId
-     */
-    public function setStoreId($storeId)
-    {
-        $this->storeId = $storeId;
-    }
-
-    /**
-     * @param string $merchantId
-     */
-    public function setMerchantId($merchantId)
-    {
-        $this->merchantId = $merchantId;
-    }
-
-    /**
-     * @param string $searchKey
-     */
-    public function setSearchKey($searchKey)
-    {
-        $this->searchKey = $searchKey;
-    }
-
-    /**
-     * @return string
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * @param string $key
-     */
-    public function setKey($key)
-    {
-        $this->key = $key;
     }
 
     /**
