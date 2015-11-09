@@ -122,6 +122,23 @@ class Client extends BaseClient
         }
     }
 
+    public function performRefund($store, $key, $currency, $amount, $ref)
+    {
+        try {
+            $mpiBody = $this->authorizeMpiRequestForRefund($store, $key, $currency, $amount, $ref);
+
+            if (empty($mpi->acsurl)) {
+                return $this->authorizeRemoteRequest(array($mpiBody->xml()));
+            } else {
+                return new Redirect($mpi->acsurl->__toString(), $mpi->session->__toString(), $mpi->pareq->__toString());
+            }
+        } catch (AuthFailed $e) {
+            return new Response($e->getMessage(), static::RESPONSE_ERROR_STATUS);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), static::RESPONSE_SERVER_ERROR_STATUS);
+        }
+    }
+
     /**
      * Sends a request to the Innovate API with all the information about the
      * 3D secure payment to be performed.
@@ -236,6 +253,25 @@ class Client extends BaseClient
         }
 
         return $response;
+    }
+
+    protected function authorizeMpiRequestForRefund($store, $key, $currency, $amount, $ref)
+    {
+       $xmlBody = "
+         <remote>
+             <store>$store</store>
+             <key>$key</key>
+             <tran>
+                    <type>refund</type>
+                    <class>ecom</class>
+                    <currency>$currency</currency>
+                    <amount>$amount</amount>
+                    <ref>$ref</ref>
+                    <test>1</test>
+             </tran>
+        </remote>";
+
+      return new Response($xmlBody, 200, array());
     }
 
     /**

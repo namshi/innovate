@@ -67,6 +67,13 @@ class ServiceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
+    public function testRefund()
+    {
+        $response = $this->client->performRefund($this->configs['storeId'], $this->configs['authenticationKey'], 'AED', 20, '027565285313');
+        echo $response->getContent();
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
     public function testInnovateServiceAuthenticationFailingWithWrongStoreId()
     {
         $client   = $this->client;
