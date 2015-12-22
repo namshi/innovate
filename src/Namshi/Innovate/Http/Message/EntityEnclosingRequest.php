@@ -28,7 +28,7 @@ class EntityEnclosingRequest extends BaseRequest
     public function __construct($method, $url, $headers = array())
     {
         parent::__construct($method, $url, $headers);
-        
+
         $this->xmlBody = array();
     }
 
@@ -56,7 +56,7 @@ class EntityEnclosingRequest extends BaseRequest
         if (!empty($mpiData)) {
             $this->addMpiData($mpiData);
         }
-        
+
         $encoder    = new XmlEncoder('remote');
         $serializer = new Serializer(array(new GetSetMethodNormalizer()), array($encoder));
         $this->setBody($serializer->serialize($this->xmlBody, 'xml'));
@@ -77,8 +77,8 @@ class EntityEnclosingRequest extends BaseRequest
         $this->addKey($key);
         $this->addTransaction($transaction);
         $this->addCard($card);
-        $encoder        = new XmlEncoder('remote');
-        $serializer     = new Serializer(array(new GetSetMethodNormalizer()), array($encoder));
+        $encoder    = new XmlEncoder('remote');
+        $serializer = new Serializer(array(new GetSetMethodNormalizer()), array($encoder));
         $this->setBody($serializer->serialize($this->xmlBody, 'xml'));
     }
 
