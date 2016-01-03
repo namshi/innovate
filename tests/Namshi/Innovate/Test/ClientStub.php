@@ -20,6 +20,15 @@ class ClientStub extends Client
   }
 
   /**
+  * Instead of sending the request to Innovate and returning the response, we
+  * just return the Request itself
+  */
+  public function send($request)
+  {
+    return $request;
+  }
+
+  /**
   * Instead of sending a requesto to Innovate we directly return a valid response
   * @return Response
   */

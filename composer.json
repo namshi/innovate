@@ -25,6 +25,10 @@
         {
           "name": "cirpo",
           "email": "alessandro.cinelli@gmail.com"
+        },
+        {
+          "name": "filippo",
+          "email": "filippo.desantis@gmail.com"
         }
     ],
     "autoload": {

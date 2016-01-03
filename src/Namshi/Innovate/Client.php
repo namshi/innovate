@@ -9,6 +9,8 @@ use Namshi\Innovate\Request\Factory as RequestFactory;
 use Namshi\Innovate\Payment\Transaction;
 use Namshi\Innovate\Payment\Card;
 use Namshi\Innovate\Payment\BillingInformation;
+use Namshi\Innovate\Tokenized\Card as TokenizedCard;
+use Namshi\Innovate\Tokenized\BillingInformation as TokenizedBillingInfo;
 use Namshi\Innovate\Payment\Browser;
 use Namshi\Innovate\Exception\AuthFailed;
 use Namshi\Innovate\Http\Response\Redirect;
@@ -19,15 +21,16 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Client extends BaseClient
 {
-    const INNOVATE_URL                  = "https://secure.innovatepayments.com/gateway/remote.xml";
-    const INNOVATE_MPI_URL              = "https://secure.innovatepayments.com/gateway/remote_mpi.xml";
-    const INNOVATE_SEARCH_BASE_URL      = "https://secure.innovatepayments.com";
-    const INNOVATE_SEARCH_BY_CARTID_URI = "/tools/api/xml/transaction/%s/cart";
-    const STATUS_ERROR                  = 'E';
-    const STATUS_ON_HOLD                = 'H';
-    const STATUS_APPROVED               = 'A';
-    const RESPONSE_ERROR_STATUS         = 400;
-    const RESPONSE_SERVER_ERROR_STATUS  = 500;
+    const INNOVATE_URL                     = "https://secure.innovatepayments.com/gateway/remote.xml";
+    const INNOVATE_MPI_URL                 = "https://secure.innovatepayments.com/gateway/remote_mpi.xml";
+    const INNOVATE_BASE_URL                = "https://secure.innovatepayments.com";
+    const INNOVATE_GENERATE_CARD_TOKEN_URI = "/gateway/tokenize.xml";
+    const INNOVATE_SEARCH_BY_CARTID_URI    = "/tools/api/xml/transaction/%s/cart";
+    const STATUS_ERROR                     = 'E';
+    const STATUS_ON_HOLD                   = 'H';
+    const STATUS_APPROVED                  = 'A';
+    const RESPONSE_ERROR_STATUS            = 400;
+    const RESPONSE_SERVER_ERROR_STATUS     = 500;
 
     /**
      * @var array
@@ -196,7 +199,7 @@ class Client extends BaseClient
      */
     public function searchTransactionsByCartId($cartId)
     {
-        $client = new HttpClient(self::INNOVATE_SEARCH_BASE_URL, array(
+        $client = new HttpClient(self::INNOVATE_BASE_URL, array(
             'request.options' => array(
                 'auth'    => array($this->merchantId, $this->searchKey, 'Basic'),
             )
@@ -219,6 +222,27 @@ class Client extends BaseClient
         }
 
         return $xml;
+    }
+
+    /**
+     * Make a request ro the tokenize api endpoint.
+     *
+     * @param  Card               $card
+     * @param  BillingInformation $billing
+     * @return Guzzle\Http\Message\Response
+     */
+    public function tokenize(TokenizedCard $card, TokenizedBillingInfo $billing)
+    {
+        $client  = new HttpClient(self::INNOVATE_BASE_URL);
+        $request = $this->requestFactory->createTokenizeRequest(
+            $client,
+            $this->getStoreId(),
+            $this->getKey(),
+            $card,
+            $billing
+        );
+
+        return $this->send($request);
     }
 
     /**
