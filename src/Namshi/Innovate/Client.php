@@ -2,13 +2,12 @@
 
 namespace Namshi\Innovate;
 
-use Guzzle\Service\Client as BaseClient;
 use Guzzle\Http\Client as HttpClient;
+use Namshi\Innovate\CreditCardInterface;
+use Namshi\Innovate\CustomerInformationInterface;
 use Namshi\Innovate\Exception\InnovateException;
 use Namshi\Innovate\Request\Factory as RequestFactory;
 use Namshi\Innovate\Payment\Transaction;
-use Namshi\Innovate\Payment\Card;
-use Namshi\Innovate\Payment\BillingInformation;
 use Namshi\Innovate\Tokenized\Card as TokenizedCard;
 use Namshi\Innovate\Tokenized\BillingInformation as TokenizedBillingInfo;
 use Namshi\Innovate\Payment\Browser;
@@ -19,13 +18,13 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * HTTP client tied to the Innovate API.
  */
-class Client extends BaseClient
+class Client
 {
     const INNOVATE_URL                     = "https://secure.innovatepayments.com/gateway/remote.xml";
     const INNOVATE_MPI_URL                 = "https://secure.innovatepayments.com/gateway/remote_mpi.xml";
     const INNOVATE_BASE_URL                = "https://secure.innovatepayments.com";
-    const INNOVATE_GENERATE_CARD_TOKEN_URI = "/gateway/tokenize.xml";
-    const INNOVATE_SEARCH_BY_CARTID_URI    = "/tools/api/xml/transaction/%s/cart";
+    const INNOVATE_GENERATE_CARD_TOKEN_URL = "https://secure.innovatepayments.com/gateway/tokenize.xml";
+    const INNOVATE_SEARCH_BY_CARTID_URL    = "https://secure.innovatepayments.com/tools/api/xml/transaction/%s/cart";
     const STATUS_ERROR                     = 'E';
     const STATUS_ON_HOLD                   = 'H';
     const STATUS_APPROVED                  = 'A';
@@ -56,12 +55,12 @@ class Client extends BaseClient
     protected $transaction;
 
     /**
-     * @var Card
+     * @var CreditCardInterface
      */
     protected $card;
 
     /**
-     * @var BillingInformation
+     * @var CustomerInformationInterface
      */
     protected $billingInformation;
 
@@ -76,9 +75,9 @@ class Client extends BaseClient
     protected $merchantId;
 
     /**
-     * @var string
+     * @var RequestFactory
      */
-    protected $searchKey;
+    protected $requestFactory;
 
     /**
      * Constructor
@@ -88,16 +87,23 @@ class Client extends BaseClient
      * @param \Namshi\Innovate\Payment\Transaction $transaction
      * @param string $baseUrl
      * @param array $config
+     * @param \Guzzle\Service\Client|null $guzzleClient
      */
-    public function __construct($storeId, $merchantId, $key, $searchKey, $baseUrl = '', $config = null)
+    public function __construct(
+        $storeId,
+        $merchantId,
+        $key,
+        $searchKey,
+        $baseUrl = '',
+        $config = null,
+        \Guzzle\Service\Client $guzzleClient = null)
     {
-        parent::__construct($baseUrl, $config);
-
-        $this->setStoreId($storeId);
-        $this->setMerchantId($merchantId);
-        $this->setSearchKey($searchKey);
-        $this->setKey($key);
-        $this->setRequestFactory(RequestFactory::getInstance());
+        $this->guzzleClient = $guzzleClient ?: new \Guzzle\Service\Client($baseUrl, $config);
+        $this->storeId = $storeId;
+        $this->merchantId = $merchantId;
+        $this->searchKey = $searchKey;
+        $this->key = $key;
+        $this->requestFactory = new RequestFactory();
     }
 
     /**
@@ -106,7 +112,7 @@ class Client extends BaseClient
      *
      * @return Response
      */
-    public function performPayment(Transaction $transaction, Card $card, BillingInformation $billing, Browser $browser)
+    public function performPayment(Transaction $transaction, CreditCardInterface $card, CustomerInformationInterface $billing, Browser $browser)
     {
         try {
             $this->setTransactionDetails($transaction, $card, $billing, $browser);
@@ -129,14 +135,14 @@ class Client extends BaseClient
      * Sends a request to the Innovate API with all the information about the
      * 3D secure payment to be performed.
      *
-     * @param Transaction        $transaction
-     * @param Card               $card
-     * @param BillingInformation $billing
-     * @param Browser            $browser
-     * @param array              $mpiData
+     * @param Transaction                  $transaction
+     * @param CreditCardInterface          $card
+     * @param CustomerInformationInterface $billing
+     * @param Browser                      $browser
+     * @param array                        $mpiData
      * @return Response
      */
-    public function perform3DSecurePayment(Transaction $transaction, Card $card, BillingInformation $billing, Browser $browser, array $mpiData)
+    public function perform3DSecurePayment(Transaction $transaction, CreditCardInterface $card, CustomerInformationInterface $billing, Browser $browser, array $mpiData)
     {
         try {
             $this->setTransactionDetails($transaction, $card, $billing, $browser);
@@ -150,47 +156,6 @@ class Client extends BaseClient
     }
 
     /**
-     * Creates remote request and creates the body to be sent to innovate api.
-     *
-     * @param string $method
-     * @param null $uri
-     * @param null $headers
-     * @param null $body
-     * @param $mpiData
-     * @return \Guzzle\Http\Message\RequestInterface
-     */
-    public function createRemoteRequest($method = 'GET', $uri = null, $headers = null, $body = null, $mpiData)
-    {
-        $request = parent::createRequest($method, $uri, $headers, $body);
-
-        if (!$body) {
-            $request->createBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser(), $mpiData);
-        }
-
-        return $request;
-    }
-
-    /**
-     * Creates mpi request as innovate api need it.
-     *
-     * @param string $method
-     * @param string $uri
-     * @param array $headers
-     * @param string|resource|array|EntityBodyInterface $body
-     * @return \Guzzle\Http\Message\RequestInterface
-     */
-    public function createMpiRequest($method = 'GET', $uri = null, $headers = null, $body = null)
-    {
-        $request = parent::createRequest($method, $uri, $headers, $body);
-
-        if (!$body) {
-            $request->createMpiBody($this->getStoreId(), $this->getKey(), $this->getTransaction(), $this->getCard(), $this->getBillingInformation(), $this->getBrowser());
-        }
-
-        return $request;
-    }
-
-    /**
      * Given a cart id reference will search for transactions for that cart id on innovate
      *
      * @param $ref
@@ -199,17 +164,14 @@ class Client extends BaseClient
      */
     public function searchTransactionsByCartId($cartId)
     {
-        $client = new HttpClient(self::INNOVATE_BASE_URL, array(
-            'request.options' => array(
-                'auth'    => array($this->merchantId, $this->searchKey, 'Basic'),
-            )
-        ));
+        $request = $this->requestFactory->createSearchByCartIdRequest(
+            $this->guzzleClient,
+            $cartId,
+            $this->merchantId,
+            $this->searchKey
+        );
 
-        $request  = $client->get(sprintf(self::INNOVATE_SEARCH_BY_CARTID_URI, $cartId), array(), array(
-            'timeout'         => 5,
-            'connect_timeout' => 5
-        ));
-        $response = $this->send($request);
+        $response = $this->guzzleClient->send($request);
 
         if ( ! $response instanceof \Guzzle\Http\Message\Response) {
             throw new InnovateException('Error while connecting to innovate. Transactions for '.$cartId.' could not be fetched.');
@@ -227,22 +189,21 @@ class Client extends BaseClient
     /**
      * Make a request ro the tokenize api endpoint.
      *
-     * @param  Card               $card
-     * @param  BillingInformation $billing
+     * @param  TokenizedCard        $card
+     * @param  TokenizedBillingInfo $billing
      * @return Guzzle\Http\Message\Response
      */
     public function tokenize(TokenizedCard $card, TokenizedBillingInfo $billing)
     {
-        $client  = new HttpClient(self::INNOVATE_BASE_URL);
         $request = $this->requestFactory->createTokenizeRequest(
-            $client,
+            $this->guzzleClient,
             $this->getStoreId(),
             $this->getKey(),
             $card,
             $billing
         );
 
-        return $this->send($request);
+        return $this->guzzleClient->send($request);
     }
 
     /**
@@ -253,10 +214,30 @@ class Client extends BaseClient
      */
     protected function authorizeMpiRequest()
     {
-        $response = $this->send($this->createMpiRequest('POST', self::INNOVATE_MPI_URL, null));
+        $request  = $this->requestFactory->createMpiRequest(
+            $this->guzzleClient,
+            'POST',
+            self::INNOVATE_MPI_URL,
+            null,
+            $this->getStoreId(),
+            $this->getKey(),
+            $this->getTransaction(),
+            $this->getCard(),
+            $this->getBillingInformation()
+        );
 
-        if (empty($response) || !empty($response->xml()->error)) {
-            throw new AuthFailed();
+        $response = $this->guzzleClient->send($request);
+
+        if (empty($response)) {
+            throw new AuthFailed("Innovate authorization request timeout");
+        }
+
+        if (!($response->xml() instanceof \SimpleXMLElement)) {
+            throw new AuthFailed("Invalid Innovate authorization request");
+        }
+
+        if (!empty((string)$response->xml()->error)) {
+            throw new AuthFailed((string)$response->getBody());
         }
 
         return $response;
@@ -269,11 +250,25 @@ class Client extends BaseClient
      * @return array|\Guzzle\Http\Message\Response|null
      * @throws Exception\AuthFailed
      */
-    public function authorizeRemoteRequest($mpiData)
+    protected function authorizeRemoteRequest($mpiData)
     {
-        $response   = $this->send($this->createRemoteRequest('POST', self::INNOVATE_URL, null, null, $mpiData));
+        $request = $this->requestFactory->createRemoteRequest(
+            $this->guzzleClient,
+            'POST',
+            self::INNOVATE_URL,
+            null,
+            $this->getStoreId(),
+            $this->getKey(),
+            $this->getTransaction(),
+            $this->getCard(),
+            $this->getBillingInformation(),
+            $this->getBrowser(),
+            $mpiData
+        );
 
-        if (!$response || !isset($response)) {
+        $response   = $this->guzzleClient->send($request);
+
+        if (!$response || !isset($response) || !($response->xml() instanceof \SimpleXMLElement)) {
             return new Response('Authentication Failed', self::RESPONSE_ERROR_STATUS);
         }
 
@@ -284,37 +279,12 @@ class Client extends BaseClient
         return new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders()->toArray());
     }
 
-
     /**
      * @return string
      */
     public function getStoreId()
     {
         return $this->storeId;
-    }
-
-    /**
-     * @param string $storeId
-     */
-    public function setStoreId($storeId)
-    {
-        $this->storeId = $storeId;
-    }
-
-    /**
-     * @param string $merchantId
-     */
-    public function setMerchantId($merchantId)
-    {
-        $this->merchantId = $merchantId;
-    }
-
-    /**
-     * @param string $searchKey
-     */
-    public function setSearchKey($searchKey)
-    {
-        $this->searchKey = $searchKey;
     }
 
     /**
@@ -326,14 +296,6 @@ class Client extends BaseClient
     }
 
     /**
-     * @param string $key
-     */
-    public function setKey($key)
-    {
-        $this->key = $key;
-    }
-
-    /**
      * @return Namshi\Innovate\Payment\Transaction
      */
     public function getTransaction()
@@ -342,35 +304,11 @@ class Client extends BaseClient
     }
 
     /**
-     * @param Payment\Transaction $transaction
-     */
-    public function setTransaction(Transaction $transaction)
-    {
-        $this->transaction = $transaction;
-    }
-
-    /**
-     * @param Payment\Card $card
-     */
-    public function setCard(Card $card)
-    {
-        $this->card = $card;
-    }
-
-    /**
-     * @return Payment\Card
+     * @return CreditCardInterface
      */
     public function getCard()
     {
         return $this->card;
-    }
-
-    /**
-     * @param $browser
-     */
-    public function setBrowser($browser)
-    {
-        $this->browser = $browser;
     }
 
     /**
@@ -382,15 +320,7 @@ class Client extends BaseClient
     }
 
     /**
-     * @param $billingInformation
-     */
-    public function setBillingInformation($billingInformation)
-    {
-        $this->billingInformation = $billingInformation;
-    }
-
-    /**
-     * @return Payment\BillingInformation
+     * @return CustomerInformationInterface
      */
     public function getBillingInformation()
     {
@@ -400,16 +330,20 @@ class Client extends BaseClient
     /**
      * Sets transactions details for the innovate api call
      *
-     * @param Transaction        $transaction
-     * @param Card               $card
-     * @param BillingInformation $billing
-     * @param Browser            $browser
+     * @param Transaction                  $transaction
+     * @param CreditCardInterface          $card
+     * @param CustomerInformationInterface $billing
+     * @param Browser                      $browser
      */
-    protected function setTransactionDetails(Transaction $transaction, Card $card, BillingInformation $billing, Browser $browser)
-    {
-        $this->setTransaction($transaction);
-        $this->setCard($card);
-        $this->setBillingInformation($billing);
-        $this->setBrowser($browser);
+    protected function setTransactionDetails(
+        Transaction $transaction,
+        CreditCardInterface $card,
+        CustomerInformationInterface $billing,
+        Browser $browser = null
+    ) {
+        $this->transaction = $transaction;
+        $this->card = $card;
+        $this->billingInformation = $billing;
+        $this->browser = $browser;
     }
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<remote>
+    <store>EXAMPLE_STORE</store>
+    <key>xyz</key>
+    <tran>
+        <type>sale</type>
+        <class>ecom</class>
+        <test>1</test>
+        <cartid>ORDER_NUMBER</cartid>
+        <description>DESCRIPTION</description>
+        <currency>USD</currency>
+        <amount>40</amount>
+        <ref/>
+    </tran>
+    <card>
+        <number>1234123412340002</number>
+        <cvv>123</cvv>
+    </card>
+    <billing>
+        <email>test@namshi.com</email>
+        <ip>192.168.0.1</ip>
+    </billing>
+    <browser>
+        <agent>BROWSER_USER_AGENT_HEADER</agent>
+        <accept>BROWSER_ACCEPT_HEADER</accept>
+    </browser>
+    <mpi>
+        <session>xyz</session>
+        <pares>323213sdsd0132132=</pares>
+    </mpi>
+</remote>

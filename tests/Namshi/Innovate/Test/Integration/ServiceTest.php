@@ -95,23 +95,20 @@ class ServiceTest extends PHPUnit_Framework_TestCase
         $response   = $this->client->performPayment($this->transaction, $this->card, $this->billing, $this->browser);
         $this->assertInstanceOf('Namshi\Innovate\Http\Response\Redirect', $response);
 
-        if ($response instanceof Redirect) {
+        $request    = $this->client->createRequest('post', $response->getTargetUrl(), array(), $this->getAcsForm($response), array('CONTENT-TYPE' => 'text/form-data', 'ACCEPT' => 'application/x-www-form-urlencoded'));
+        $response   = $this->client->send($request);
+        $content    = new DOMDocument();
+        $contentTxt = $response->getBody()->__toString();
+        libxml_use_internal_errors(true);
+        $content->loadHTML($contentTxt);
+        $xpath      = new DOMXPath($content);
+        $mpiFinal   = array(
+            'PaRes'     => $xpath->query("//input[@name='PaRes']")->item(0)->getAttribute('value'),
+            'session'   => $xpath->query("//input[@name='MD']")->item(0)->getAttribute('value'),
+        );
+        $response   = $this->client->send($this->client->createRemoteRequest('POST', Client::INNOVATE_URL, null, null, $mpiFinal));
 
-            $request    = $this->client->createRequest('post', $response->getTargetUrl(), array(), $this->getAcsForm($response), array('CONTENT-TYPE' => 'text/form-data', 'ACCEPT' => 'application/x-www-form-urlencoded'));
-            $response   = $this->client->send($request);
-            $content    = new DOMDocument();
-            $contentTxt = $response->getBody()->__toString();
-            libxml_use_internal_errors(true);
-            $content->loadHTML($contentTxt);
-            $xpath      = new DOMXPath($content);
-            $mpiFinal   = array(
-                'PaRes'     => $xpath->query("//input[@name='PaRes']")->item(0)->getAttribute('value'),
-                'session'   => $xpath->query("//input[@name='MD']")->item(0)->getAttribute('value'),
-            );
-            $response   = $this->client->send($this->client->createRemoteRequest('POST', Client::INNOVATE_URL, null, null, $mpiFinal));
-
-            $this->assertEquals(200, $response->getStatusCode());
-        }
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testInnovateServiceRedirectUrlWithoutSendingFormData()
@@ -120,11 +117,8 @@ class ServiceTest extends PHPUnit_Framework_TestCase
         $response   = $this->client->performPayment($this->transaction, $this->card, $this->billing, $this->browser);
         $this->assertInstanceOf('Namshi\Innovate\Http\Response\Redirect', $response);
 
-        if ($response instanceof Redirect) {
-            $response = $this->client->authorizeRemoteRequest(array());
-
-            $this->assertEquals(400, $response->getStatusCode());
-        }
+        $response = $this->client->authorizeRemoteRequest(array());
+        $this->assertEquals(400, $response->getStatusCode());
     }
 
     public function testInnovateServiceRedirectUrlWithWrongFormData()
@@ -133,15 +127,13 @@ class ServiceTest extends PHPUnit_Framework_TestCase
         $response   = $this->client->performPayment($this->transaction, $this->card, $this->billing, $this->browser);
         $this->assertInstanceOf('Namshi\Innovate\Http\Response\Redirect', $response);
 
-        if ($response instanceof Redirect) {
-            $mpiFinal = array(
-                'PaRes'     => 'wrong data',
-                'session'   => 'wrong session',
-            );
-            $response = $this->client->authorizeRemoteRequest($mpiFinal);
+        $mpiFinal = array(
+            'PaRes'     => 'wrong data',
+            'session'   => 'wrong session',
+        );
+        $response = $this->client->authorizeRemoteRequest($mpiFinal);
 
-            $this->assertEquals(400, $response->getStatusCode());
-        }
+        $this->assertEquals(400, $response->getStatusCode());
     }
 
     protected function getAcsForm(Redirect $response)

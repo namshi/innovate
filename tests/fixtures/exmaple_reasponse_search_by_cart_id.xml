@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transactions>
+    <trancount>1</trancount>
+    <transaction>
+        <id>00000001</id>
+        <prev_id/>
+        <init_id/>
+        <type>
+            <name>Transaction type name</name>
+            <code>Transaction type code</code>
+        </type>
+        <class>
+            <name>Transaction class name</name>
+            <code>Transaction class code</code>
+        </class>
+        <auth>
+            <status>Authorisation status</status>
+            <code>Authorisation code</code>
+            <message>Authorisation message</message>
+        </auth>
+        <amount>Transaction amount</amount>
+        <currency>Transaction currency</currency>
+        <description>Transaction description</description>
+        <cartid>Cart ID</cartid>
+        <test>Test mode. 0=Live, 1=Test</test>
+        <date>Transaction time and date, GMT</date>
+        <store>
+            <id>Store ID</id>
+            <name>Store name</name>
+        </store>
+        <billing>
+            <title>Customer title</title>
+            <fname>Customer forename(s)</fname>
+            <sname>Customer surname</sname>
+            <addr1>Address line 1</addr1>
+            <addr2>Address line 1</addr2>
+            <addr3>Address line 1</addr3>
+            <city>City</city>
+            <region>Region</region>
+            <country>Country – full name</country>
+            <country_iso>Country – 2 character ISO code</country_iso>
+            <zip>Post/Area code</zip>
+            <tel>Telephone number</tel>
+            <email>Email address</email>
+        </billing>
+        <card>
+            <number>Card number. Only the first and last 4 digits are shown</number>
+            <type>Card type, if known</type>
+            <country_iso>Card issue country, if known</country_iso>
+        </card>
+        <notecount>Number of notes attached to this transaction</notecount>
+        <notes>
+            <note>
+                <text>Note text</text>
+                <ref>Additional transaction related to this note, if any</ref>
+            </note>
+        </notes>
+    </transaction>
+</transactions>

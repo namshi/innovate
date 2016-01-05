@@ -4,12 +4,13 @@ namespace Namshi\Innovate\Payment;
 
 use Namshi\Innovate\Payment\Billing\Customer;
 use Namshi\Innovate\Payment\Billing\Address;
+use Namshi\Innovate\AbstractCustomerInformation;
 use InvalidArgumentException;
 
 /**
  * This class represents a billing as detailed as Innovate needs it.
  */
-class BillingInformation
+class BillingInformation extends AbstractCustomerInformation
 {
     /**
      * @var Namshi\Innovate\Payment\Billing\Customer
@@ -22,16 +23,6 @@ class BillingInformation
     protected $address;
 
     /**
-     * @var string
-     */
-    protected $email;
-
-    /**
-     * @var string
-     */
-    protected $ip;
-
-    /**
      * Constructor
      *
      * @param Billing\Customer $customer
@@ -41,17 +32,9 @@ class BillingInformation
      */
     public function __construct(Customer $customer, Address $address, $email, $ip)
     {
-        $this->setCustomer($customer);
-        $this->setAddress($address);
-        $this->setEmail($email);
-        $this->setIp($ip);
-    }
+        parent::__construct($email, $ip);
 
-    /**
-     * @param Billing\Address $address
-     */
-    public function setAddress(Address $address)
-    {
+        $this->customer = $customer;
         $this->address = $address;
     }
 
@@ -64,60 +47,11 @@ class BillingInformation
     }
 
     /**
-     * @param Billing\Customer $customer
-     */
-    public function setCustomer(Customer $customer)
-    {
-        $this->customer = $customer;
-    }
-
-    /**
      * @return Namshi\Innovate\Payment\Billing\Customer
      */
     public function getCustomer()
     {
         return $this->customer;
-    }
-
-    /**
-     * @param $email
-     * @throws \InvalidArgumentException
-     */
-    public function setEmail($email)
-    {
-        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException("The email parameter doesn't match email format.");
-        }
-        
-        $this->email = $email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param $ip
-     * @throws \InvalidArgumentException
-     */
-    public function setIp($ip)
-    {
-        if (! filter_var($ip, FILTER_VALIDATE_IP)) {
-            throw new InvalidArgumentException("The ip address parameter doesn't match ip format.");
-        }
-        $this->ip = $ip;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIp()
-    {
-        return $this->ip;
     }
 
     /**
