@@ -9,8 +9,8 @@ use Exception;
  */
 class AuthFailed extends Exception
 {
-    public function __construct()
+    public function __construct($message = null)
     {
-        $this->message = "Payment authentication failed";
+        $this->message = $message ?: "Payment authentication failed";
     }
 }

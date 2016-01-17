@@ -5,11 +5,12 @@ namespace Namshi\Innovate\Payment;
 use InvalidArgumentException;
 use DateTime;
 use Namshi\Innovate\Exception\ExpiredCard as ExpiredCardException;
+use Namshi\Innovate\CreditCardInterface;
 
 /**
  * This class represents a card as detailed as Innovate needs it.
  */
-class Card
+class Card implements CreditCardInterface
 {
     /**
      * @var string
